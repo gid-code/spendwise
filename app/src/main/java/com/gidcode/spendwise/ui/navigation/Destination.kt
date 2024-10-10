@@ -1,10 +1,13 @@
 package com.gidcode.spendwise.ui.navigation
 
-object Destination {
-   const val splash = "splash"
-   const val onBoarding = "onboard"
-   const val authentication = "auth"
-   const val login = "login"
-   const val signUp = "signup"
-   const val home = "home"
+sealed class Destination(val route: String) {
+   data object Splash : Destination("splash")
+   data object Home : Destination("home")
+   data object OnBoarding : Destination("onboarding")
+   data object SignUp : Destination("signup")
+   data object Login : Destination("login")
+   data object Authentication : Destination("auth")
+   data object Dashboard : Destination("dashboard")
+   data object Expenses : Destination("expenses")
+   data object Profile : Destination("profile")
 }

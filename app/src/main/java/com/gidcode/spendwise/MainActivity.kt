@@ -6,10 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraph
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.gidcode.spendwise.ui.auth.Authentication
+import androidx.navigation.compose.navigation
+import com.gidcode.spendwise.ui.auth.LoginScreen
+import com.gidcode.spendwise.ui.auth.OnboardingScreen
+import com.gidcode.spendwise.ui.auth.SignUpScreen
+import com.gidcode.spendwise.ui.auth.authGraph
 import com.gidcode.spendwise.ui.home.HomeScreen
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
@@ -24,15 +30,24 @@ class MainActivity : ComponentActivity() {
       setContent {
          AppTheme {
             ProvideNavHostController {
-               Box(modifier = Modifier.fillMaxSize()){
-                  NavHost(Navigator.current, Destination.splash) {
-                     composable(Destination.splash) { SplashScreen() }
-                     composable(Destination.authentication) { Authentication() }
-                     composable(Destination.home) { HomeScreen() }
-                  }
-               }
+               SpendWiseApp()
             }
          }
       }
    }
+
+
 }
+
+@Composable
+fun SpendWiseApp(){
+   Box(modifier = Modifier.fillMaxSize()){
+      NavHost(Navigator.current, Destination.Splash.route) {
+         composable(Destination.Splash.route) { SplashScreen() }
+         authGraph()
+         composable(Destination.Home.route) { HomeScreen() }
+      }
+   }
+}
+
+

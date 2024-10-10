@@ -1,23 +1,20 @@
 package com.gidcode.spendwise.ui.auth
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
+import com.gidcode.spendwise.ui.navigation.Destination
 
-@Composable
-fun Authentication(){
-   Surface {
-      Column(
-         horizontalAlignment = Alignment.CenterHorizontally,
-         verticalArrangement = Arrangement.Center,
-         modifier = Modifier.fillMaxSize()
+fun NavGraphBuilder.authGraph(){
+      navigation(
+         route = Destination.Authentication.route,
+         startDestination = Destination.OnBoarding.route
       ) {
-         Text(text = "Auth Screen")
+         composable(Destination.OnBoarding.route) { OnboardingScreen() }
+         composable(Destination.SignUp.route) { SignUpScreen() }
+         composable(Destination.Login.route) { LoginScreen() }
       }
-   }
 }
