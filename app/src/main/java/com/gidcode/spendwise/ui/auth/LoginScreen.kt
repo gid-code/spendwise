@@ -1,15 +1,15 @@
 package com.gidcode.spendwise.ui.auth
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -29,7 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -46,6 +46,7 @@ import com.gidcode.spendwise.R
 import com.gidcode.spendwise.ui.common.PreviewContent
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
+import com.gidcode.spendwise.ui.theme.primaryDark
 
 @Composable
 fun LoginScreen() {
@@ -130,10 +131,15 @@ fun LoginScreenContent(){
                   popUpTo(Destination.Authentication.route) { inclusive = true }
                }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+               .fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp)
          ) {
             Text("Login",
-               style = MaterialTheme.typography.bodyMedium
+               style = MaterialTheme.typography.titleMedium.copy(
+                  color = MaterialTheme.colorScheme.onPrimary,
+                  fontWeight = FontWeight.Bold
+               )
             )
          }
 
