@@ -155,7 +155,7 @@ fun SignUpScreenContent(){
          // Login Button
          Button(
             onClick = {
-               navController.navigate(Destination.Home.route){
+               navController.navigate(Destination.Main.route){
                   popUpTo(Destination.Authentication.route) { inclusive = true }
                }
             },

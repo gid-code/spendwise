@@ -7,7 +7,8 @@ sealed class Destination(val route: String) {
    data object SignUp : Destination("signup")
    data object Login : Destination("login")
    data object Authentication : Destination("auth")
-   data object Dashboard : Destination("dashboard")
+   data object Main : Destination("main")
    data object Expenses : Destination("expenses")
    data object Profile : Destination("profile")
+   data object Settings: Destination("settings")
 }

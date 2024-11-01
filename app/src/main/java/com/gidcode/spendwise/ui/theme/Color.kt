@@ -1,6 +1,7 @@
 package com.gidcode.spendwise.ui.theme
 import androidx.compose.ui.graphics.Color
 
+val otherGradientColor = Color(0xFF429690)
 val primaryLight = Color(0xFF006A65)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFF9DF2EA)
