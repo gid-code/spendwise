@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,9 +46,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gidcode.spendwise.R
+import com.gidcode.spendwise.domain.model.CreateAccountDomainModel
+import com.gidcode.spendwise.ui.common.ErrorView
+import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.PreviewContent
+import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
+import com.gidcode.spendwise.util.Resource
 
 @Composable
 fun SignUpScreen() {
@@ -56,6 +63,8 @@ fun SignUpScreen() {
 @Composable
 fun SignUpScreenContent(){
    val navController = Navigator.current
+   val authViewModel = ViewModelProvider.authToken
+//   val authToken = authViewModel.
    var email by remember { mutableStateOf("") }
    var name by remember { mutableStateOf("") }
    var password by remember { mutableStateOf("") }
@@ -64,9 +73,23 @@ fun SignUpScreenContent(){
    var confirmPassword by remember { mutableStateOf("") }
    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
+   val isPasswordConfirmed by remember {
+      derivedStateOf {
+         password.lowercase() == confirmPassword.lowercase()
+      }
+   }
+
    val isFormValid by remember { derivedStateOf {
       email.isNotBlank() && password.isNotBlank()
    } }
+
+   LaunchedEffect(key1 = authViewModel.authToken) {
+      if (authViewModel.authToken is Resource.Success) {
+         navController.navigate(Destination.Main.route) {
+            popUpTo(Destination.Authentication.route) { inclusive = true }
+         }
+      }
+   }
 
    Surface(
       modifier = Modifier.fillMaxSize()
@@ -105,6 +128,7 @@ fun SignUpScreenContent(){
             onValueChange = {name = it },
             label = { Text("Full Name") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            enabled = authViewModel.authToken !is Resource.Loading,
             modifier = Modifier.fillMaxWidth()
          )
 
@@ -113,6 +137,7 @@ fun SignUpScreenContent(){
             onValueChange = {email = it },
             label = { Text("Email") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            enabled = authViewModel.authToken !is Resource.Loading,
             modifier = Modifier.fillMaxWidth()
          )
 
@@ -130,6 +155,7 @@ fun SignUpScreenContent(){
                   Icon(imageVector = icon, contentDescription = "Toggle password visibility")
                }
             },
+            enabled = authViewModel.authToken !is Resource.Loading,
             modifier = Modifier.fillMaxWidth()
          )
 
@@ -147,6 +173,7 @@ fun SignUpScreenContent(){
                   Icon(imageVector = icon, contentDescription = "Toggle password visibility")
                }
             },
+            enabled = authViewModel.authToken !is Resource.Loading,
             modifier = Modifier.fillMaxWidth()
          )
 
@@ -155,19 +182,32 @@ fun SignUpScreenContent(){
          // Login Button
          Button(
             onClick = {
-               navController.navigate(Destination.Main.route){
-                  popUpTo(Destination.Authentication.route) { inclusive = true }
-               }
+               if (isPasswordConfirmed && isFormValid)
+                  authViewModel.createUser(
+                     CreateAccountDomainModel(
+                        name,
+                        email,
+                        password
+                     )
+                  )
             },
+            enabled = authViewModel.authToken !is Resource.Loading,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp)
          ) {
-            Text("Register",
-               style = MaterialTheme.typography.titleMedium.copy(
-                  fontWeight = FontWeight.Bold,
-                  color = MaterialTheme.colorScheme.onPrimary,
+            if (authViewModel.authToken is Resource.Loading ) {
+               CircularProgressIndicator(
+                  color = MaterialTheme.colorScheme.onPrimary
                )
-            )
+            }else {
+               Text(
+                  "Register",
+                  style = MaterialTheme.typography.titleMedium.copy(
+                     fontWeight = FontWeight.Bold,
+                     color = MaterialTheme.colorScheme.onPrimary,
+                  )
+               )
+            }
          }
 
          Spacer(modifier = Modifier.weight(1f))

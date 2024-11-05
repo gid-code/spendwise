@@ -22,6 +22,8 @@ class AuthViewModel @Inject constructor(
    var authToken by mutableStateOf<Resource<AccessTokenDomainModel>>(Resource.Loading)
       private set
 
+//   var uiState by
+
 
    fun loginUser(data: LoginDomainModel){
       viewModelScope.launch {
