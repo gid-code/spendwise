@@ -1,9 +1,6 @@
 package com.gidcode.spendwise.ui.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,36 +28,56 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gidcode.spendwise.domain.model.Exception as Failure
+import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
+import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.PreviewContent
+import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.theme.otherGradientColor
+import com.gidcode.spendwise.util.toStringAsFixed
 
 
 @Composable
 fun HomeScreen() {
-   HomeScreenContent()
+   val homeViewModel = ViewModelProvider.homeViewModel
+   val uiState by homeViewModel.uiState.collectAsState()
+   HomeScreenContent(
+      uiState
+   )
 }
 
 
 @Composable
-fun HomeScreenContent() {
-//   val scrollState by rememberScrollableState {
-//
-//   }
+fun HomeScreenContent(
+   uiState: UIState
+) {
+   var showError by remember { mutableStateOf(false) }
+
+   LaunchedEffect(key1 = uiState) {
+      if (uiState.error != null){
+         showError = true
+      }
+   }
+
    Surface(
       modifier = Modifier.fillMaxSize()
    ){
@@ -79,7 +96,7 @@ fun HomeScreenContent() {
                   bottomEnd = 50.dp
                )
             )
-         ){}
+         )
          Column(
             modifier = Modifier
                .padding(16.dp)
@@ -112,19 +129,38 @@ fun HomeScreenContent() {
                }
             }
             Spacer(modifier = Modifier.height(24.dp))
-            SummaryCard()
+            SummaryCard(
+               balance = uiState.balance,
+               income = uiState.totalIncome,
+               expense = uiState.totalExpense
+            )
             Box(modifier = Modifier.fillMaxSize()){
                Column(modifier =
                   Modifier
                      .verticalScroll(rememberScrollState())
                ) {
                   Spacer(modifier = Modifier.height(24.dp))
-                  IncomeExpensesChart()
+                  IncomeExpensesChart(income = uiState.totalIncome, expenses = uiState.totalExpense)
                   Spacer(modifier = Modifier.height(24.dp))
-                  RevenueHistory(income = listOf())
+                  RevenueHistory(income = uiState.incomeList)
                   Spacer(modifier = Modifier.height(74.dp))
                }
             }
+         }
+         Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom
+         ) {
+
+            if (showError){
+               uiState.error?.message?.let {
+                  ErrorViewWithoutButton(text = it) {
+                     showError = false
+                  }
+               }
+            }
+
+            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
          }
       }
    }
@@ -132,7 +168,7 @@ fun HomeScreenContent() {
 }
 
 @Composable
-fun RevenueHistory(income: List<String>) {
+fun RevenueHistory(income: List<IncomeItemDomainModel>) {
    Column {
       Row (
          Modifier.fillMaxWidth(),
@@ -197,7 +233,10 @@ fun RevenueHistory(income: List<String>) {
 }
 
 @Composable
-fun IncomeExpensesChart() {
+fun IncomeExpensesChart(income: Double,expenses: Double) {
+   val maxValue = listOf(income,expenses).maxOrNull() ?: 0.0
+   val incomeValue = ((income * 170) / maxValue).toInt()
+   val expensesValue = ((expenses * 170) / maxValue).toInt()
    Card {
       Column (
          modifier = Modifier
@@ -213,14 +252,58 @@ fun IncomeExpensesChart() {
             .fillMaxWidth()
             .height(200.dp)
          ){
+            Column(
+               modifier = Modifier.align(Alignment.BottomStart)
+            ) {
+               //y-axis
+               Row {
+                  if (maxValue != 0.0) {
+                     Box(modifier = Modifier
+                        .width(20.dp)
+                        .height(175.dp)){
+                        Text(text = maxValue.toStringAsFixed(),
+                           maxLines = 1
+                        )
+                     }
+                  }
+                  Row (
+                     modifier = Modifier.fillMaxWidth(),
+                     horizontalArrangement = Arrangement.SpaceAround,
+                     verticalAlignment = Alignment.Bottom
+                  ) {
+                     Box(modifier = Modifier
+                        .height(incomeValue.dp)
+                        .width(20.dp)
+                        .background(color = MaterialTheme.colorScheme.primary))
+                     Box(modifier = Modifier
+                        .height(expensesValue.dp)
+                        .width(20.dp)
+                        .background(color = MaterialTheme.colorScheme.secondary))
+                  }
 
+               }
+               //x-axis
+               Row {
+                  Text(text = "0")
+                  Spacer(modifier = Modifier.width(20.dp))
+                  Row (
+                     modifier = Modifier.fillMaxWidth(),
+                     horizontalArrangement = Arrangement.SpaceAround
+                  ) {
+                     Text(text = "Income")
+                     Text(text = "Expenses")
+                  }
+
+               }
+
+            }
          }
       }
    }
 }
 
 @Composable
-fun SummaryCard() {
+fun SummaryCard(balance: String, income: Double, expense: Double) {
    Card (
       colors = CardColors(
          containerColor = MaterialTheme.colorScheme.primary,
@@ -241,7 +324,7 @@ fun SummaryCard() {
             )
          )
          Spacer(modifier = Modifier.height(8.dp))
-         Text(text = "GHS 100.00",
+         Text(text = "GHS $balance",
             style = MaterialTheme.typography.headlineMedium.copy(
                color = MaterialTheme.colorScheme.onPrimary,
                fontWeight = FontWeight.Bold
@@ -252,12 +335,13 @@ fun SummaryCard() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
          ){
-            MiniSummary(title="Income", amount="GHS 20000.00", color = MaterialTheme.colorScheme.onPrimary)
-            MiniSummary(title="Expenses", amount="GHS 100.00", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+            MiniSummary(title="Income", amount="GHS ${income.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary)
+            MiniSummary(title="Expenses", amount="GHS ${expense.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
          }
       }
    }
 }
+
 
 @Composable
 fun MiniSummary(title: String, amount: String, color: Color) {
@@ -302,7 +386,12 @@ fun MiniSummary(title: String, amount: String, color: Color) {
 @Composable
 fun HomeScreenPreview() {
    PreviewContent {
-      HomeScreenContent()
+      HomeScreenContent(
+         uiState = UIState(
+            totalExpense = 900.0,
+            totalIncome = 10000.0,
+         )
+      )
    }
 }
 
@@ -310,6 +399,9 @@ fun HomeScreenPreview() {
 @Composable
 fun HomeScreenScreenDarkPreview() {
    PreviewContent(darkTheme = true) {
-      HomeScreenContent()
+      HomeScreenContent(uiState = UIState(
+         totalExpense = 900.0,
+         totalIncome = 10000.0
+      ))
    }
 }

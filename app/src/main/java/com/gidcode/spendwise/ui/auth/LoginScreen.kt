@@ -1,10 +1,11 @@
 package com.gidcode.spendwise.ui.auth
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +24,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,38 +46,65 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gidcode.spendwise.R
+import com.gidcode.spendwise.domain.model.Exception as Failure
+import com.gidcode.spendwise.domain.model.LoginDomainModel
+import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.PreviewContent
+import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
-import com.gidcode.spendwise.ui.theme.primaryDark
 
 @Composable
 fun LoginScreen() {
-   LoginScreenContent()
+   val authViewModel = ViewModelProvider.authToken
+   val uiState by authViewModel.uiState.collectAsState()
+   val uiEvent: (UIEvents) -> Unit = authViewModel::handleEvent
+   LoginScreenContent(
+      uiState,
+      uiEvent
+   )
 }
 
 
 @Composable
-fun LoginScreenContent(){
+fun LoginScreenContent(
+   uiState: UIState,
+   login: (UIEvents) -> Unit
+){
    val navController = Navigator.current
+
    var email by remember { mutableStateOf("") }
    var password by remember { mutableStateOf("") }
    var passwordVisible by remember { mutableStateOf(false) }
+   var showError by remember { mutableStateOf(false) }
 
    val isFormValid by remember { derivedStateOf {
       email.isNotBlank() && password.isNotBlank()
    } }
 
+   LaunchedEffect(key1 = uiState) {
+      if (uiState.hasAuthToken) {
+         navController.navigate(Destination.Main.route) {
+            popUpTo(Destination.Authentication.route) { inclusive = true }
+         }
+      }else if (uiState.error != null){
+         showError = true
+      }
+   }
+
+
+
    Surface(
       modifier = Modifier.fillMaxSize()
    ) {
-      Column(
-         modifier = Modifier.padding(
-            vertical = 10.dp,
-            horizontal = 16.dp
-         ),
-         verticalArrangement = Arrangement.Top
-      ) {
+      Box {
+         Column(
+            modifier = Modifier.padding(
+               vertical = 10.dp,
+               horizontal = 16.dp
+            ),
+            verticalArrangement = Arrangement.Top
+         ) {
          Spacer(modifier = Modifier.weight(1f))
          Text(
             text = stringResource(id = R.string.login),
@@ -101,6 +132,7 @@ fun LoginScreenContent(){
             onValueChange = {email = it },
             label = { Text("Email") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
          )
 
@@ -118,6 +150,7 @@ fun LoginScreenContent(){
                   Icon(imageVector = icon, contentDescription = "Toggle password visibility")
                }
             },
+            enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
          )
 
@@ -126,20 +159,30 @@ fun LoginScreenContent(){
          // Login Button
          Button(
             onClick = {
-               navController.navigate(Destination.Main.route){
-                  popUpTo(Destination.Authentication.route) { inclusive = true }
+               if (isFormValid){
+                  login.invoke(UIEvents.LoginUser(LoginDomainModel(email,password)))
+//                  authViewModel.loginUser(
+//                     LoginDomainModel(email,password)
+//                  )
                }
             },
+            enabled = !uiState.isLoading,
             modifier = Modifier
                .fillMaxWidth(),
             shape = RoundedCornerShape(8.dp)
          ) {
-            Text("Login",
-               style = MaterialTheme.typography.titleMedium.copy(
-                  color = MaterialTheme.colorScheme.onPrimary,
-                  fontWeight = FontWeight.Bold
+            if (uiState.isLoading) {
+               CircularProgressIndicator(
+                  color = MaterialTheme.colorScheme.onPrimary
                )
-            )
+            } else {
+               Text("Login",
+                  style = MaterialTheme.typography.titleMedium.copy(
+                     color = MaterialTheme.colorScheme.onPrimary,
+                     fontWeight = FontWeight.Bold
+                  )
+               )
+            }
          }
 
          Spacer(modifier = Modifier.weight(1f))
@@ -169,6 +212,23 @@ fun LoginScreenContent(){
          Spacer(modifier = Modifier.height(25.dp))
 
       }
+         Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
+         ) {
+            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+
+            if (showError){
+               uiState.error?.message?.let {
+                  ErrorViewWithoutButton(text = it) {
+                     showError = false
+                  }
+               }
+            }
+         }
+
+
+      }
    }
 }
 
@@ -176,7 +236,10 @@ fun LoginScreenContent(){
 @Composable
 fun LoginScreenPreview() {
    PreviewContent {
-      LoginScreenContent()
+      LoginScreenContent(
+         uiState = UIState(),
+         login = {}
+      )
    }
 }
 
@@ -184,6 +247,9 @@ fun LoginScreenPreview() {
 @Composable
 fun LoginScreenDarkPreview() {
    PreviewContent(darkTheme = true) {
-      LoginScreenContent()
+      LoginScreenContent(
+         uiState = UIState(),
+         login = {}
+      )
    }
 }
