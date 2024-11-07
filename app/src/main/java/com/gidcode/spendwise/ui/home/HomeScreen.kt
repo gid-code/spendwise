@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +29,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,11 +50,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.gidcode.spendwise.domain.model.Exception as Failure
 import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
 import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
+import com.gidcode.spendwise.ui.common.ListTile
 import com.gidcode.spendwise.ui.common.PreviewContent
 import com.gidcode.spendwise.ui.common.ViewModelProvider
+import com.gidcode.spendwise.ui.navigation.Destination
+import com.gidcode.spendwise.ui.navigation.Navigator
 import com.gidcode.spendwise.ui.theme.otherGradientColor
 import com.gidcode.spendwise.util.toStringAsFixed
 
@@ -70,6 +75,7 @@ fun HomeScreen() {
 fun HomeScreenContent(
    uiState: UIState
 ) {
+   val navController = Navigator.current
    var showError by remember { mutableStateOf(false) }
 
    LaunchedEffect(key1 = uiState) {
@@ -142,7 +148,7 @@ fun HomeScreenContent(
                   Spacer(modifier = Modifier.height(24.dp))
                   IncomeExpensesChart(income = uiState.totalIncome, expenses = uiState.totalExpense)
                   Spacer(modifier = Modifier.height(24.dp))
-                  RevenueHistory(income = uiState.incomeList)
+                  RevenueHistory(income = uiState.incomeList, openDialog = {navController.navigate(Destination.AddIncome)})
                   Spacer(modifier = Modifier.height(74.dp))
                }
             }
@@ -162,13 +168,24 @@ fun HomeScreenContent(
 
             Spacer(modifier = Modifier.fillMaxHeight(0.1f))
          }
+         if (uiState.isLoading && uiState.incomeList.isEmpty() && uiState.expenseList.isEmpty()) {
+            Box(
+               modifier = Modifier
+                  .fillMaxSize()
+                  .background(color = Color.Black.copy(alpha = 0.5f))
+            ){
+               CircularProgressIndicator(
+                  modifier = Modifier.align(alignment = Alignment.Center)
+               )
+            }
+         }
       }
    }
 
 }
 
 @Composable
-fun RevenueHistory(income: List<IncomeItemDomainModel>) {
+fun RevenueHistory(income: List<IncomeItemDomainModel>, openDialog: () -> Unit) {
    Column {
       Row (
          Modifier.fillMaxWidth(),
@@ -177,7 +194,7 @@ fun RevenueHistory(income: List<IncomeItemDomainModel>) {
       ) {
          Text(text = "Revenue History", style= MaterialTheme.typography.titleLarge )
          ElevatedButton(
-            onClick = { /*TODO*/ },
+            onClick = openDialog,
             colors = ButtonColors(
                containerColor = MaterialTheme.colorScheme.primary,
                contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -194,6 +211,7 @@ fun RevenueHistory(income: List<IncomeItemDomainModel>) {
             }
          }
       }
+      Spacer(modifier = Modifier.height(8.dp))
       if (income.isEmpty()){
          Column (
             modifier = Modifier.fillMaxWidth(),
@@ -227,7 +245,9 @@ fun RevenueHistory(income: List<IncomeItemDomainModel>) {
             )
          }
       }else {
-
+         income.forEach {income->
+            ListTile(title = income.nameOfRevenue, trailing = "GHS ${income.amount.toDouble().toStringAsFixed()}")
+         }
       }
    }
 }
@@ -274,11 +294,13 @@ fun IncomeExpensesChart(income: Double,expenses: Double) {
                      Box(modifier = Modifier
                         .height(incomeValue.dp)
                         .width(20.dp)
-                        .background(color = MaterialTheme.colorScheme.primary))
+                        .background(color = MaterialTheme.colorScheme.primary)
+                     )
                      Box(modifier = Modifier
                         .height(expensesValue.dp)
                         .width(20.dp)
-                        .background(color = MaterialTheme.colorScheme.secondary))
+                        .background(color = MaterialTheme.colorScheme.secondary)
+                     )
                   }
 
                }
@@ -388,6 +410,11 @@ fun HomeScreenPreview() {
    PreviewContent {
       HomeScreenContent(
          uiState = UIState(
+            incomeList = listOf(
+               IncomeItemDomainModel("Salary",30),
+               IncomeItemDomainModel("Gig",1000)
+            ),
+            isLoading = false,
             totalExpense = 900.0,
             totalIncome = 10000.0,
          )
@@ -400,6 +427,7 @@ fun HomeScreenPreview() {
 fun HomeScreenScreenDarkPreview() {
    PreviewContent(darkTheme = true) {
       HomeScreenContent(uiState = UIState(
+         isLoading = false,
          totalExpense = 900.0,
          totalIncome = 10000.0
       ))

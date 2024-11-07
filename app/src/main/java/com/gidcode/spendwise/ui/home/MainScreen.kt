@@ -19,6 +19,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.gidcode.spendwise.ui.common.PreviewContent
 import com.gidcode.spendwise.ui.navigation.BottomNavItems
@@ -91,8 +92,16 @@ fun MainScreenContent(){
             HomeScreen()
          }
 
+         dialog(route = Destination.AddIncome.route){
+            AddIncomeDialog()
+         }
+
          composable(route = Destination.Expenses.route){
             ExpensesScreen()
+         }
+
+         dialog(route = Destination.AddExpenses.route){
+            AddExpensesDialog()
          }
 
          composable(route = Destination.Settings.route){
