@@ -166,7 +166,7 @@ fun HomeScreenContent(
                }
             }
 
-            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+            Spacer(modifier = Modifier.fillMaxHeight(0.15f))
          }
          if (uiState.isLoading && uiState.incomeList.isEmpty() && uiState.expenseList.isEmpty()) {
             Box(

@@ -2,6 +2,7 @@ package com.gidcode.spendwise.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gidcode.spendwise.data.network.AuthEventHandler
 import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
 import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
    private val repository: HomeRepository,
-): ViewModel() {
+): ViewModel(), AuthEventHandler {
 
    private val _uiState = MutableStateFlow(UIState())
    val uiState: StateFlow<UIState> = _uiState.asStateFlow()
@@ -65,6 +66,12 @@ class HomeViewModel @Inject constructor(
                }
             }
          )
+      }
+   }
+
+   override fun onUnauthorized() {
+      viewModelScope.launch {
+         _uiState.value = UIState(error = Exception.UnAuthorizedException(""))
       }
    }
 

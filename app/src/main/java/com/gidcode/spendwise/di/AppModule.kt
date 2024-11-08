@@ -1,9 +1,12 @@
 package com.gidcode.spendwise.di
 
+import android.app.Activity
 import android.content.Context
 import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
 import com.gidcode.spendwise.data.datasource.remote.AuthRemoteDataSource
 import com.gidcode.spendwise.data.datasource.remote.HomeRemoteDataSource
+import com.gidcode.spendwise.data.network.AuthEventHandler
+import com.gidcode.spendwise.data.network.AuthInterceptor
 import com.gidcode.spendwise.data.network.client.MyLadderApiClient
 import com.gidcode.spendwise.data.network.service.SpendWiseService
 import com.gidcode.spendwise.data.repository.AuthDataRepository
@@ -22,9 +25,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
    @Provides
+   @Singleton
    fun provideHttpClient(
-      @ApplicationContext context: Context
-   ): OkHttpClient = MyLadderApiClient.createHttpClient(context)
+      @ApplicationContext context: Context,
+      authInterceptor: AuthInterceptor
+   ): OkHttpClient = MyLadderApiClient.createHttpClient(context,authInterceptor)
 
    @Provides
    @Singleton
@@ -37,6 +42,10 @@ object AppModule {
    fun provideSpendWiseDataStore(
       @ApplicationContext context: Context
    ): SpendWiseDataStore = SpendWiseDataStore(context)
+
+   @Provides
+   @Singleton
+   fun provideAuthInterceptor(): AuthInterceptor = AuthInterceptor()
 
    @Provides
    @Singleton
@@ -61,6 +70,9 @@ object AppModule {
    @Singleton
    fun provideHomeRepository(
       dataSource: HomeRemoteDataSource,
-      dataStore: SpendWiseDataStore
-   ): HomeRepository = HomeDataRepository(dataSource,dataStore)
+      dataStore: SpendWiseDataStore,
+      authInterceptor: AuthInterceptor
+   ): HomeRepository = HomeDataRepository(dataSource,dataStore,authInterceptor)
+
+
 }

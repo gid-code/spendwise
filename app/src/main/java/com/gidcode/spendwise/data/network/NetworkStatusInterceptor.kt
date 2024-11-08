@@ -3,6 +3,10 @@ package com.gidcode.spendwise.data.network
 import com.gidcode.spendwise.domain.model.Exception
 import okhttp3.Interceptor
 import okhttp3.Response
+import okhttp3.ResponseBody
+import retrofit2.http.HTTP
+import java.io.IOException
+import java.net.UnknownHostException
 
 class NetworkStatusInterceptor(connectionManager: ConnectionManager) : Interceptor {
 
@@ -10,7 +14,13 @@ class NetworkStatusInterceptor(connectionManager: ConnectionManager) : Intercept
 
    override fun intercept(chain: Interceptor.Chain): Response {
       return if (manager.isConnected()) {
-         chain.proceed(chain.request())
+         try {
+            chain.proceed(chain.request())
+         }catch (e: UnknownHostException){
+            throw Exception.NoNetWork()
+         }catch (e: IOException){
+            throw e.message?.let { Exception.NetworkException(it) }!!
+         }
       } else {
          throw Exception.NetworkUnavailableException()
       }
