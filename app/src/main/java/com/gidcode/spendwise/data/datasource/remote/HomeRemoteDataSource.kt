@@ -9,10 +9,12 @@ class HomeRemoteDataSource(
 ) {
 
    suspend fun income(token: String): List<IncomeItemApi> {
-      return service.income(token)
+      val auth = "Bearer $token"
+      return service.income(auth)
    }
 
    suspend fun expenditure(token: String): List<ExpenseItemApi> {
-      return service.expenditure(token)
+      val auth = "Bearer $token"
+      return service.expenditure(auth)
    }
 }

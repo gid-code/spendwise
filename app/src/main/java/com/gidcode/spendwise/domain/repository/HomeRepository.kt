@@ -7,7 +7,7 @@ import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
 import com.gidcode.spendwise.util.Either
 
 interface HomeRepository {
-   suspend fun incomes(): Either<Exception, List<IncomeItemDomainModel>>
-   suspend fun expenses(): Either<Exception, List<ExpenseItemDomainModel>>
-   fun setAuthEventHandler(handler: AuthEventHandler)
+   suspend fun incomes(token: String): Either<Exception, List<IncomeItemDomainModel>>
+   suspend fun expenses(token: String): Either<Exception, List<ExpenseItemDomainModel>>
+//   fun setAuthEventHandler(handler: AuthEventHandler)
 }

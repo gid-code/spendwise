@@ -60,6 +60,7 @@ import com.gidcode.spendwise.util.Resource
 @Composable
 fun SignUpScreen() {
    val authViewModel = ViewModelProvider.authToken
+   authViewModel.getAccessToken()
    val uiState by authViewModel.uiState.collectAsState()
    val uiEvent: (UIEvents) -> Unit = authViewModel::handleEvent
    SignUpScreenContent(
@@ -252,17 +253,28 @@ fun SignUpScreenContent(
             Spacer(modifier = Modifier.height(25.dp))
 
          }
-         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top
+//         Column(
+//            modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Top
+//         ) {
+//            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+//
+//            if (showError){
+//               uiState.error?.message?.let {
+//                  ErrorViewWithoutButton(text = it, visible = showError) {
+//                     showError = false
+//                  }
+//               }
+//            }
+//         }
+         Box(
+            modifier = Modifier
+               .align(Alignment.TopCenter)
+               .padding(top = 100.dp)
          ) {
-            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-
-            if (showError){
-               uiState.error?.message?.let {
-                  ErrorViewWithoutButton(text = it) {
-                     showError = false
-                  }
+            uiState.error?.message?.let {
+               ErrorViewWithoutButton(text = it, visible = showError) {
+                  showError = false
                }
             }
          }

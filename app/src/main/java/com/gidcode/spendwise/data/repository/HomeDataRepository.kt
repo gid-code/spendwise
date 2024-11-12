@@ -15,8 +15,7 @@ import javax.inject.Inject
 
 class HomeDataRepository(
    private val remoteDataSource: HomeRemoteDataSource,
-   private val dataStore: SpendWiseDataStore,
-   private val authInterceptor: AuthInterceptor
+//   private val authInterceptor: AuthInterceptor
 ): HomeRepository {
 //   @Inject
 //   lateinit var authEventHandler: AuthEventHandler
@@ -25,9 +24,9 @@ class HomeDataRepository(
 //      authInterceptor.authEventHandler = authEventHandler
 //   }
 
-   override suspend fun incomes(): Either<Failure, List<IncomeItemDomainModel>> {
+   override suspend fun incomes(token: String): Either<Failure, List<IncomeItemDomainModel>> {
       return try {
-         val result = remoteDataSource.income(dataStore.getAccessToken()!!).map { incomeItemApi ->
+         val result = remoteDataSource.income(token).map { incomeItemApi ->
             incomeItemApi.toDomain()
          }
          right(result)
@@ -37,9 +36,9 @@ class HomeDataRepository(
       }
    }
 
-   override suspend fun expenses(): Either<Failure, List<ExpenseItemDomainModel>> {
+   override suspend fun expenses(token: String): Either<Failure, List<ExpenseItemDomainModel>> {
       return try {
-         val result = remoteDataSource.expenditure(dataStore.getAccessToken()!!).map { expenseItem ->
+         val result = remoteDataSource.expenditure(token).map { expenseItem ->
             expenseItem.toDomain()
          }
          right(result)
@@ -49,8 +48,8 @@ class HomeDataRepository(
       }
    }
 
-   override fun setAuthEventHandler(handler: AuthEventHandler) {
-      authInterceptor.authEventHandler = handler
-   }
+//   override fun setAuthEventHandler(handler: AuthEventHandler) {
+//      authInterceptor.authEventHandler = handler
+//   }
 
 }

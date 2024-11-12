@@ -1,5 +1,10 @@
 package com.gidcode.spendwise.ui.common
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -31,44 +37,54 @@ import kotlinx.coroutines.delay
 @Composable
 fun ErrorViewWithoutButton(
    text: String,
+   visible: Boolean,
    onDismiss: () -> Unit
 ) {
+   val shape = RoundedCornerShape(20)
    LaunchedEffect(Unit) {
       delay(3000)
       onDismiss()
    }
-   Box(
-      modifier = Modifier
-         .padding(horizontal = 24.dp)
-         .border(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.error,
-            shape = RoundedCornerShape(20),
-         )
-         .background(
-            color = MaterialTheme.colorScheme.errorContainer,
-            shape = RoundedCornerShape(20)
-         )
+
+   AnimatedVisibility(
+      visible = visible,
+      enter = slideInVertically(initialOffsetY = { +40 }) +
+          fadeIn(),
+      exit = slideOutVertically() + fadeOut()
    ) {
-      Row(
+      Box(
          modifier = Modifier
-            .padding(all = 8.dp)
-            .fillMaxWidth(),
-         verticalAlignment = Alignment.Top
+            .padding(horizontal = 12.dp)
+            .clip(shape)
+            .background(
+               color = MaterialTheme.colorScheme.errorContainer,
+            )
+            .border(
+               width = 1.dp,
+               color = MaterialTheme.colorScheme.error,
+               shape = shape,
+            )
       ) {
-         Icon(
-            imageVector = Icons.Default.Warning,
-            tint = MaterialTheme.colorScheme.error,
-            contentDescription = "warning icon"
-         )
-         Spacer(modifier = Modifier.width(8.dp))
-         Text(
-            text,
-            style = MaterialTheme.typography.bodyMedium.copy(
-               color = MaterialTheme.colorScheme.onErrorContainer
-            ),
-            overflow = TextOverflow.Visible
-         )
+         Row(
+            modifier = Modifier
+               .padding(all = 8.dp)
+               .fillMaxWidth(),
+            verticalAlignment = Alignment.Top
+         ) {
+            Icon(
+               imageVector = Icons.Default.Info,
+               tint = MaterialTheme.colorScheme.error,
+               contentDescription = "warning icon"
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+               text,
+               style = MaterialTheme.typography.bodyMedium.copy(
+                  color = MaterialTheme.colorScheme.onErrorContainer
+               ),
+               overflow = TextOverflow.Visible
+            )
+         }
       }
    }
 }
@@ -77,7 +93,7 @@ fun ErrorViewWithoutButton(
 @Composable
 fun ErrorViewWOButtonPreview() {
    PreviewContent {
-      ErrorViewWithoutButton(text = "Error processing your request Error processing your request Error processing your request Error processing your request") {
+      ErrorViewWithoutButton(text = "Error processing your request Error processing your request Error processing your request Error processing your request",visible = true) {
 
       }
    }
@@ -87,7 +103,7 @@ fun ErrorViewWOButtonPreview() {
 @Composable
 fun ErrorViewWOButtonDarkPreview() {
    PreviewContent(darkTheme = true) {
-      ErrorViewWithoutButton(text = "Error processing your request") {
+      ErrorViewWithoutButton(text = "Error processing your request", visible = true) {
 
       }
    }

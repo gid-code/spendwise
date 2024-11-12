@@ -57,6 +57,7 @@ import com.gidcode.spendwise.ui.navigation.Navigator
 @Composable
 fun LoginScreen() {
    val authViewModel = ViewModelProvider.authToken
+   authViewModel.getAccessToken()
    val uiState by authViewModel.uiState.collectAsState()
    val uiEvent: (UIEvents) -> Unit = authViewModel::handleEvent
    LoginScreenContent(
@@ -72,7 +73,6 @@ fun LoginScreenContent(
    login: (UIEvents) -> Unit
 ){
    val navController = Navigator.current
-
    var email by remember { mutableStateOf("") }
    var password by remember { mutableStateOf("") }
    var passwordVisible by remember { mutableStateOf(false) }
@@ -84,6 +84,7 @@ fun LoginScreenContent(
 
    LaunchedEffect(key1 = uiState) {
       if (uiState.hasAuthToken) {
+         println("has token")
          navController.navigate(Destination.Main.route) {
             popUpTo(Destination.Authentication.route) { inclusive = true }
          }
@@ -212,17 +213,29 @@ fun LoginScreenContent(
          Spacer(modifier = Modifier.height(25.dp))
 
       }
-         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Top
-         ) {
-            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+//         Column(
+//            modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Top
+//         ) {
+//            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+//
+//            if (showError){
+//               uiState.error?.message?.let {
+//                  ErrorViewWithoutButton(text = it,visible = showError) {
+//                     showError = false
+//                  }
+//               }
+//            }
+//         }
 
-            if (showError){
-               uiState.error?.message?.let {
-                  ErrorViewWithoutButton(text = it) {
-                     showError = false
-                  }
+         Box(
+            modifier = Modifier
+               .align(Alignment.TopCenter)
+               .padding(top = 100.dp)
+         ) {
+            uiState.error?.message?.let {
+               ErrorViewWithoutButton(text = it, visible = showError) {
+                  showError = false
                }
             }
          }

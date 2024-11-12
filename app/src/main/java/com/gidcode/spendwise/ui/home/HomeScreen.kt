@@ -1,5 +1,10 @@
 package com.gidcode.spendwise.ui.home
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,11 +15,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,6 +54,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
 import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.ListTile
@@ -59,6 +64,9 @@ import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
 import com.gidcode.spendwise.ui.theme.otherGradientColor
 import com.gidcode.spendwise.util.toStringAsFixed
+import com.google.accompanist.insets.WindowInsets
+import com.google.accompanist.insets.imePadding
+import com.google.accompanist.insets.navigationBarsWithImePadding
 
 
 @Composable
@@ -79,7 +87,11 @@ fun HomeScreenContent(
    var showError by remember { mutableStateOf(false) }
 
    LaunchedEffect(key1 = uiState) {
-      if (uiState.error != null){
+      if (uiState.error is Exception.UnAuthorizedException) {
+         navController.navigate(Destination.OnBoarding.route) {
+            popUpTo(Destination.Main.route) { inclusive = true }
+         }
+      }else if (uiState.error != null){
          showError = true
       }
    }
@@ -138,7 +150,8 @@ fun HomeScreenContent(
             SummaryCard(
                balance = uiState.balance,
                income = uiState.totalIncome,
-               expense = uiState.totalExpense
+               expense = uiState.totalExpense,
+               visible = true
             )
             Box(modifier = Modifier.fillMaxSize()){
                Column(modifier =
@@ -148,25 +161,37 @@ fun HomeScreenContent(
                   Spacer(modifier = Modifier.height(24.dp))
                   IncomeExpensesChart(income = uiState.totalIncome, expenses = uiState.totalExpense)
                   Spacer(modifier = Modifier.height(24.dp))
-                  RevenueHistory(income = uiState.incomeList, openDialog = {navController.navigate(Destination.AddIncome)})
+                  RevenueHistory(income = uiState.incomeList, openDialog = {navController.navigate(Destination.AddIncome.route)})
                   Spacer(modifier = Modifier.height(74.dp))
                }
             }
          }
-         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Bottom
+//         Column(
+//            modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Bottom
+//         ) {
+//
+//            if (showError){
+//               uiState.error?.message?.let {
+//                  ErrorViewWithoutButton(text = it, visible = showError) {
+//                     showError = false
+//                  }
+//               }
+//            }
+//
+//            Spacer(modifier = Modifier.fillMaxHeight(0.15f))
+//         }
+         Box(
+            modifier = Modifier
+               .align(Alignment.BottomCenter)
+               .padding(bottom = 100.dp)
+               .navigationBarsWithImePadding()
          ) {
-
-            if (showError){
-               uiState.error?.message?.let {
-                  ErrorViewWithoutButton(text = it) {
-                     showError = false
-                  }
+            uiState.error?.message?.let {
+               ErrorViewWithoutButton(text = it, visible = showError) {
+                  showError = false
                }
             }
-
-            Spacer(modifier = Modifier.fillMaxHeight(0.15f))
          }
          if (uiState.isLoading && uiState.incomeList.isEmpty() && uiState.expenseList.isEmpty()) {
             Box(
@@ -186,67 +211,75 @@ fun HomeScreenContent(
 
 @Composable
 fun RevenueHistory(income: List<IncomeItemDomainModel>, openDialog: () -> Unit) {
-   Column {
-      Row (
-         Modifier.fillMaxWidth(),
-         horizontalArrangement = Arrangement.SpaceBetween,
-         verticalAlignment = Alignment.CenterVertically
-      ) {
-         Text(text = "Revenue History", style= MaterialTheme.typography.titleLarge )
-         ElevatedButton(
-            onClick = openDialog,
-            colors = ButtonColors(
-               containerColor = MaterialTheme.colorScheme.primary,
-               contentColor = MaterialTheme.colorScheme.onPrimary,
-               disabledContainerColor = Color.Gray,
-               disabledContentColor = Color.Gray
-            )
+   AnimatedVisibility(
+      visible = true,
+      enter = fadeIn()
+   ) {
+      Column {
+         Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
          ) {
-            Row (
-               verticalAlignment = Alignment.CenterVertically
-            ){
-               Icon(imageVector = Icons.Filled.Add, contentDescription = "add button")
-               Spacer(modifier = Modifier.width(5.dp))
-               Text(text = "Add New", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "Revenue History", style = MaterialTheme.typography.titleLarge)
+            ElevatedButton(
+               onClick = openDialog,
+               colors = ButtonColors(
+                  containerColor = MaterialTheme.colorScheme.primary,
+                  contentColor = MaterialTheme.colorScheme.onPrimary,
+                  disabledContainerColor = Color.Gray,
+                  disabledContentColor = Color.Gray
+               )
+            ) {
+               Row(
+                  verticalAlignment = Alignment.CenterVertically
+               ) {
+                  Icon(imageVector = Icons.Filled.Add, contentDescription = "add button")
+                  Spacer(modifier = Modifier.width(5.dp))
+                  Text(text = "Add New", style = MaterialTheme.typography.bodyMedium)
+               }
             }
          }
-      }
-      Spacer(modifier = Modifier.height(8.dp))
-      if (income.isEmpty()){
-         Column (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-         ) {
-            Icon(
-               modifier = Modifier.size(64.dp),
-               imageVector = Icons.Default.AccountBalanceWallet,
-               contentDescription = "empty wallet",
-               tint = MaterialTheme.colorScheme.primary.copy(
-                  alpha = 0.5f
-               )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-               text = "No revenue history yet",
-               style = MaterialTheme.typography.titleMedium.copy(
-                  color = MaterialTheme.colorScheme.onSurface.copy(
-                     alpha = 0.7f
-                  )
-               )
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-               text = "Tap Add New to record your first income",
-               style = MaterialTheme.typography.bodyMedium.copy(
-                  color = MaterialTheme.colorScheme.onSurface.copy(
+         Spacer(modifier = Modifier.height(8.dp))
+         if (income.isEmpty()) {
+            Column(
+               modifier = Modifier.fillMaxWidth(),
+               horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+               Icon(
+                  modifier = Modifier.size(64.dp),
+                  imageVector = Icons.Default.AccountBalanceWallet,
+                  contentDescription = "empty wallet",
+                  tint = MaterialTheme.colorScheme.primary.copy(
                      alpha = 0.5f
                   )
                )
-            )
-         }
-      }else {
-         income.forEach {income->
-            ListTile(title = income.nameOfRevenue, trailing = "GHS ${income.amount.toDouble().toStringAsFixed()}")
+               Spacer(modifier = Modifier.height(16.dp))
+               Text(
+                  text = "No revenue history yet",
+                  style = MaterialTheme.typography.titleMedium.copy(
+                     color = MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = 0.7f
+                     )
+                  )
+               )
+               Spacer(modifier = Modifier.height(8.dp))
+               Text(
+                  text = "Tap Add New to record your first income",
+                  style = MaterialTheme.typography.bodyMedium.copy(
+                     color = MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = 0.5f
+                     )
+                  )
+               )
+            }
+         } else {
+            income.forEach { income ->
+               ListTile(
+                  title = income.nameOfRevenue,
+                  trailing = "GHS ${income.amount.toDouble().toStringAsFixed()}"
+               )
+            }
          }
       }
    }
@@ -257,67 +290,80 @@ fun IncomeExpensesChart(income: Double,expenses: Double) {
    val maxValue = listOf(income,expenses).maxOrNull() ?: 0.0
    val incomeValue = ((income * 170) / maxValue).toInt()
    val expensesValue = ((expenses * 170) / maxValue).toInt()
-   Card {
-      Column (
-         modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-         horizontalAlignment = Alignment.Start
-      ) {
-         Text(text = "Income Vs Expenses",
-            style = MaterialTheme.typography.titleLarge
-         )
-         Spacer(modifier = Modifier.height(16.dp))
-         Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-         ){
-            Column(
-               modifier = Modifier.align(Alignment.BottomStart)
+
+   AnimatedVisibility(
+      visible = true,
+      enter = fadeIn()
+   ) {
+      Card {
+         Column(
+            modifier = Modifier
+               .padding(16.dp)
+               .fillMaxWidth(),
+            horizontalAlignment = Alignment.Start
+         ) {
+            Text(
+               text = "Income Vs Expenses",
+               style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Box(
+               modifier = Modifier
+                  .fillMaxWidth()
+                  .height(200.dp)
             ) {
-               //y-axis
-               Row {
-                  if (maxValue != 0.0) {
-                     Box(modifier = Modifier
-                        .width(20.dp)
-                        .height(175.dp)){
-                        Text(text = maxValue.toStringAsFixed(),
-                           maxLines = 1
+               Column(
+                  modifier = Modifier.align(Alignment.BottomStart)
+               ) {
+                  //y-axis
+                  Row {
+                     if (maxValue != 0.0) {
+                        Box(
+                           modifier = Modifier
+                              .width(20.dp)
+                              .height(175.dp)
+                        ) {
+                           Text(
+                              text = maxValue.toStringAsFixed(),
+                              maxLines = 1
+                           )
+                        }
+                     }
+                     Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalAlignment = Alignment.Bottom
+                     ) {
+                        Box(
+                           modifier = Modifier
+                              .height(incomeValue.dp)
+                              .width(20.dp)
+                              .background(color = MaterialTheme.colorScheme.primary)
+                        )
+                        Box(
+                           modifier = Modifier
+                              .height(expensesValue.dp)
+                              .width(20.dp)
+                              .background(color = MaterialTheme.colorScheme.secondary)
                         )
                      }
+
                   }
-                  Row (
-                     modifier = Modifier.fillMaxWidth(),
-                     horizontalArrangement = Arrangement.SpaceAround,
-                     verticalAlignment = Alignment.Bottom
-                  ) {
-                     Box(modifier = Modifier
-                        .height(incomeValue.dp)
-                        .width(20.dp)
-                        .background(color = MaterialTheme.colorScheme.primary)
-                     )
-                     Box(modifier = Modifier
-                        .height(expensesValue.dp)
-                        .width(20.dp)
-                        .background(color = MaterialTheme.colorScheme.secondary)
-                     )
+                  //x-axis
+                  Row {
+                     Text(text = "0")
+                     Spacer(modifier = Modifier.width(20.dp))
+                     Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround
+                     ) {
+                        Text(text = "Income")
+                        Text(text = "Expenses")
+                     }
+
                   }
 
                }
-               //x-axis
-               Row {
-                  Text(text = "0")
-                  Spacer(modifier = Modifier.width(20.dp))
-                  Row (
-                     modifier = Modifier.fillMaxWidth(),
-                     horizontalArrangement = Arrangement.SpaceAround
-                  ) {
-                     Text(text = "Income")
-                     Text(text = "Expenses")
-                  }
-
-               }
-
             }
          }
       }
@@ -325,42 +371,49 @@ fun IncomeExpensesChart(income: Double,expenses: Double) {
 }
 
 @Composable
-fun SummaryCard(balance: String, income: Double, expense: Double) {
-   Card (
-      colors = CardColors(
-         containerColor = MaterialTheme.colorScheme.primary,
-         contentColor = MaterialTheme.colorScheme.primary,
-         disabledContentColor = Color.Gray,
-         disabledContainerColor = Color.Gray
-      ),
-      elevation = CardDefaults.elevatedCardElevation(
-         defaultElevation = 8.dp
-      )
+fun SummaryCard(balance: String, income: Double, expense: Double, visible : Boolean = true) {
+   AnimatedVisibility(
+      visible = visible,
+      enter = slideInVertically(initialOffsetY = { -60 }) +
+          fadeIn(animationSpec = tween(durationMillis = 2000, delayMillis = 500)),
    ) {
-      Column (
-         modifier = Modifier.padding(16.dp)
+      Card (
+         colors = CardColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.primary,
+            disabledContentColor = Color.Gray,
+            disabledContainerColor = Color.Gray
+         ),
+         elevation = CardDefaults.elevatedCardElevation(
+            defaultElevation = 8.dp
+         )
       ) {
-         Text(text = "Total Balance",
-            style = MaterialTheme.typography.titleSmall.copy(
-               color = MaterialTheme.colorScheme.onPrimary
+         Column (
+            modifier = Modifier.padding(16.dp)
+         ) {
+            Text(text = "Total Balance",
+               style = MaterialTheme.typography.titleSmall.copy(
+                  color = MaterialTheme.colorScheme.onPrimary
+               )
             )
-         )
-         Spacer(modifier = Modifier.height(8.dp))
-         Text(text = "GHS $balance",
-            style = MaterialTheme.typography.headlineMedium.copy(
-               color = MaterialTheme.colorScheme.onPrimary,
-               fontWeight = FontWeight.Bold
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "GHS $balance",
+               style = MaterialTheme.typography.headlineMedium.copy(
+                  color = MaterialTheme.colorScheme.onPrimary,
+                  fontWeight = FontWeight.Bold
+               )
             )
-         )
-         Spacer(modifier = Modifier.height(16.dp))
-         Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-         ){
-            MiniSummary(title="Income", amount="GHS ${income.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary)
-            MiniSummary(title="Expenses", amount="GHS ${expense.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+            Spacer(modifier = Modifier.height(16.dp))
+            Row (
+               modifier = Modifier.fillMaxWidth(),
+               horizontalArrangement = Arrangement.SpaceBetween
+            ){
+               MiniSummary(title="Income", amount="GHS ${income.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary)
+               MiniSummary(title="Expenses", amount="GHS ${expense.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+            }
          }
       }
+      
    }
 }
 

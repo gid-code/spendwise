@@ -45,7 +45,8 @@ object AppModule {
 
    @Provides
    @Singleton
-   fun provideAuthInterceptor(): AuthInterceptor = AuthInterceptor()
+   fun provideAuthInterceptor(
+   ): AuthInterceptor = AuthInterceptor()
 
    @Provides
    @Singleton
@@ -70,9 +71,7 @@ object AppModule {
    @Singleton
    fun provideHomeRepository(
       dataSource: HomeRemoteDataSource,
-      dataStore: SpendWiseDataStore,
-      authInterceptor: AuthInterceptor
-   ): HomeRepository = HomeDataRepository(dataSource,dataStore,authInterceptor)
+   ): HomeRepository = HomeDataRepository(dataSource)
 
 
 }

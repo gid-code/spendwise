@@ -11,15 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import com.gidcode.spendwise.data.network.AuthEventHandler
 import com.gidcode.spendwise.ui.auth.authGraph
 import com.gidcode.spendwise.ui.common.ProvideMultiViewModel
+import com.gidcode.spendwise.ui.home.AddExpensesDialog
+import com.gidcode.spendwise.ui.home.AddIncomeDialog
 import com.gidcode.spendwise.ui.home.MainScreen
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
 import com.gidcode.spendwise.ui.navigation.ProvideNavHostController
 import com.gidcode.spendwise.ui.splash.SplashScreen
 import com.gidcode.spendwise.ui.theme.AppTheme
+import com.google.accompanist.insets.ProvideWindowInsets
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -31,9 +35,11 @@ class MainActivity : ComponentActivity() {
       enableEdgeToEdge()
       setContent {
          AppTheme {
-            ProvideMultiViewModel {
-               ProvideNavHostController {
-                  SpendWiseApp()
+            ProvideWindowInsets {
+               ProvideMultiViewModel {
+                  ProvideNavHostController {
+                     SpendWiseApp()
+                  }
                }
             }
          }
@@ -50,6 +56,12 @@ fun SpendWiseApp(){
          composable(Destination.Splash.route) { SplashScreen() }
          authGraph()
          composable(Destination.Main.route) { MainScreen() }
+         dialog(route = Destination.AddIncome.route){
+            AddIncomeDialog()
+         }
+         dialog(route = Destination.AddExpenses.route){
+            AddExpensesDialog()
+         }
       }
    }
 }

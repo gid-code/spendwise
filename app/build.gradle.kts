@@ -79,6 +79,9 @@ dependencies {
    // Preferences DataStore
    implementation(libs.androidx.datastore.preferences)
 
+   // Compose Accompanist
+   implementation ("com.google.accompanist:accompanist-insets:0.12.0")
+
    testImplementation(libs.junit)
    androidTestImplementation(libs.androidx.junit)
    androidTestImplementation(libs.androidx.espresso.core)

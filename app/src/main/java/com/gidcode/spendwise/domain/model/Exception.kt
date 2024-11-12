@@ -12,5 +12,5 @@ sealed class Exception(val message: String) {
 
    class NetworkException(message: String ): IOException(message)
 
-   class UnAuthorizedException(message: String): Exception(message)
+   class UnAuthorizedException(message: String = "Session expired. Please login again"): Exception(message)
 }

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -24,10 +25,16 @@ class SpendWiseDataStore(
       }
    }
 
-   suspend fun getAccessToken(): String? {
+   suspend fun getAccessToken(): Flow<String?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[accessToken]
-      }.first()
+      }
+   }
+
+   suspend fun clearData(): Preferences {
+      return context.spendWiseDataStore.edit { preferences ->
+         preferences.remove(accessToken)
+      }
    }
 }
 

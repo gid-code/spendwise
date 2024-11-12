@@ -91,17 +91,8 @@ fun MainScreenContent(){
          composable(route = Destination.Home.route){
             HomeScreen()
          }
-
-         dialog(route = Destination.AddIncome.route){
-            AddIncomeDialog()
-         }
-
          composable(route = Destination.Expenses.route){
             ExpensesScreen()
-         }
-
-         dialog(route = Destination.AddExpenses.route){
-            AddExpensesDialog()
          }
 
          composable(route = Destination.Settings.route){
