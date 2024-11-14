@@ -4,6 +4,7 @@ import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
 import com.gidcode.spendwise.data.datasource.remote.HomeRemoteDataSource
 import com.gidcode.spendwise.data.network.AuthEventHandler
 import com.gidcode.spendwise.data.network.AuthInterceptor
+import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
 import com.gidcode.spendwise.domain.model.Exception as Failure
 import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
 import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
@@ -44,6 +45,18 @@ class HomeDataRepository(
          right(result)
       }catch (e: Exception){
          println(e.message)
+         left(Failure.General(e.localizedMessage))
+      }
+   }
+
+   override suspend fun addIncome(
+      token: String,
+      data: AddIncomeDomainModel
+   ): Either<com.gidcode.spendwise.domain.model.Exception, String> {
+      return try {
+         val result = remoteDataSource.addIncome(token,data.toApi())
+         right(result)
+      }catch (e: Exception){
          left(Failure.General(e.localizedMessage))
       }
    }

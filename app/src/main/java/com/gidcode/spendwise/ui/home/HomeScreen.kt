@@ -49,8 +49,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,9 +65,9 @@ import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
 import com.gidcode.spendwise.ui.theme.otherGradientColor
+import com.gidcode.spendwise.util.Orientation
+import com.gidcode.spendwise.util.addMoveAnimation
 import com.gidcode.spendwise.util.toStringAsFixed
-import com.google.accompanist.insets.WindowInsets
-import com.google.accompanist.insets.imePadding
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
 
@@ -87,7 +89,7 @@ fun HomeScreenContent(
    var showError by remember { mutableStateOf(false) }
 
    LaunchedEffect(key1 = uiState) {
-      if (uiState.error is Exception.UnAuthorizedException) {
+      if (!uiState.isAuthorized) {
          navController.navigate(Destination.OnBoarding.route) {
             popUpTo(Destination.Main.route) { inclusive = true }
          }
@@ -372,48 +374,48 @@ fun IncomeExpensesChart(income: Double,expenses: Double) {
 
 @Composable
 fun SummaryCard(balance: String, income: Double, expense: Double, visible : Boolean = true) {
-   AnimatedVisibility(
-      visible = visible,
-      enter = slideInVertically(initialOffsetY = { -60 }) +
-          fadeIn(animationSpec = tween(durationMillis = 2000, delayMillis = 500)),
+
+   Card (
+      modifier = Modifier.addMoveAnimation(
+         orientation = Orientation.Vertical,
+         from = 0.dp,
+         to = 10.dp,
+         duration = 200
+      ),
+      colors = CardColors(
+         containerColor = MaterialTheme.colorScheme.primary,
+         contentColor = MaterialTheme.colorScheme.primary,
+         disabledContentColor = Color.Gray,
+         disabledContainerColor = Color.Gray
+      ),
+      elevation = CardDefaults.elevatedCardElevation(
+         defaultElevation = 8.dp
+      )
    ) {
-      Card (
-         colors = CardColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.primary,
-            disabledContentColor = Color.Gray,
-            disabledContainerColor = Color.Gray
-         ),
-         elevation = CardDefaults.elevatedCardElevation(
-            defaultElevation = 8.dp
-         )
+      Column (
+         modifier = Modifier.padding(16.dp)
       ) {
-         Column (
-            modifier = Modifier.padding(16.dp)
-         ) {
-            Text(text = "Total Balance",
-               style = MaterialTheme.typography.titleSmall.copy(
-                  color = MaterialTheme.colorScheme.onPrimary
-               )
+         Text(text = "Total Balance",
+            style = MaterialTheme.typography.titleSmall.copy(
+               color = MaterialTheme.colorScheme.onPrimary
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "GHS $balance",
-               style = MaterialTheme.typography.headlineMedium.copy(
-                  color = MaterialTheme.colorScheme.onPrimary,
-                  fontWeight = FontWeight.Bold
-               )
+         )
+         Spacer(modifier = Modifier.height(8.dp))
+         Text(text = "GHS $balance",
+            style = MaterialTheme.typography.headlineMedium.copy(
+               color = MaterialTheme.colorScheme.onPrimary,
+               fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Row (
-               modifier = Modifier.fillMaxWidth(),
-               horizontalArrangement = Arrangement.SpaceBetween
-            ){
-               MiniSummary(title="Income", amount="GHS ${income.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary)
-               MiniSummary(title="Expenses", amount="GHS ${expense.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
-            }
+         )
+         Spacer(modifier = Modifier.height(16.dp))
+         Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+         ){
+            MiniSummary(title="Income", amount="GHS ${income.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary)
+            MiniSummary(title="Expenses", amount="GHS ${expense.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
          }
       }
-      
    }
 }
 
