@@ -103,13 +103,6 @@ fun MainScreenContent(){
 }
 
 @Composable
-fun ExpensesScreen() {
-   Box(modifier = Modifier.fillMaxSize()) {
-      Text(text = "Expenses")
-   }
-}
-
-@Composable
 fun ProfileScreen() {
    Box(modifier = Modifier.fillMaxSize()) {
       Text(text = "Profile")

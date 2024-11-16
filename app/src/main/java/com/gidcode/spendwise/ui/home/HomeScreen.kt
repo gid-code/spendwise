@@ -44,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -277,10 +278,12 @@ fun RevenueHistory(income: List<IncomeItemDomainModel>, openDialog: () -> Unit) 
             }
          } else {
             income.forEach { income ->
-               ListTile(
-                  title = income.nameOfRevenue,
-                  trailing = "GHS ${income.amount.toDouble().toStringAsFixed()}"
-               )
+               key(income.id) {
+                  ListTile(
+                     title = income.nameOfRevenue,
+                     trailing = "GHS ${income.amount.toDouble().toStringAsFixed()}"
+                  )
+               }
             }
          }
       }
@@ -466,8 +469,8 @@ fun HomeScreenPreview() {
       HomeScreenContent(
          uiState = UIState(
             incomeList = listOf(
-               IncomeItemDomainModel("Salary",30),
-               IncomeItemDomainModel("Gig",1000)
+               IncomeItemDomainModel("ddd","Salary",30),
+               IncomeItemDomainModel("334","Gig",1000)
             ),
             isLoading = false,
             totalExpense = 900.0,

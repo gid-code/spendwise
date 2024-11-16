@@ -1,5 +1,6 @@
 package com.gidcode.spendwise.ui.home
 
+import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
@@ -180,6 +181,7 @@ data class UIState(
    val addIncome: String? = null
 )
 
+@Stable
 sealed class UIEvents {
    class AddIncome(val data: AddIncomeDomainModel) : UIEvents()
 }
