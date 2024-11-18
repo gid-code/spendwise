@@ -3,6 +3,9 @@ package com.gidcode.spendwise.ui.home
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -43,6 +46,11 @@ fun MainScreenContent(){
    )
 
    Scaffold (
+      floatingActionButton = {
+         FloatingActionButton(onClick = { /*TODO*/ }) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "fab icon" )
+         }
+      },
       bottomBar = {
          NavigationBar(
 //            containerColor = MaterialTheme.colorScheme.surface

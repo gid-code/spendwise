@@ -167,6 +167,8 @@ class HomeViewModel @Inject constructor(
       }
    }
 
+
+
 }
 
 data class UIState(
@@ -179,7 +181,18 @@ data class UIState(
    val totalExpense: Double = expenseList.fold(0.0){ sum, item -> sum + item.estimatedAmount},
    val balance: String = (totalIncome - totalExpense).toStringAsFixed(),
    val addIncome: String? = null
-)
+){
+   fun groupExpensesByCategory(): List<Pair<String, List<ExpenseItemDomainModel>>>{
+//      val groupedExpenses = mapOf<String,List<ExpenseItemDomainModel>>()
+//      for (expense in expenses){
+//
+//      }
+      return expenseList.groupBy {
+         it.category
+      }.toList()
+//      return groupedExpenses
+   }
+}
 
 @Stable
 sealed class UIEvents {

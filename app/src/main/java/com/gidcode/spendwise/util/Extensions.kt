@@ -11,11 +11,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 
 
 fun Double.toStringAsFixed() : String{
    return String.format("%.2f",this)
+}
+
+fun String.getUniqueColor() : Color {
+   val hash = this.hashCode()
+
+   return Color(hash)
 }
 
 fun Modifier.addMoveAnimation(orientation: Orientation, from: Dp, to: Dp, duration: Int): Modifier =

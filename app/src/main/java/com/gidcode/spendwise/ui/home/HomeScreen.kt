@@ -214,76 +214,71 @@ fun HomeScreenContent(
 
 @Composable
 fun RevenueHistory(income: List<IncomeItemDomainModel>, openDialog: () -> Unit) {
-   AnimatedVisibility(
-      visible = true,
-      enter = fadeIn()
-   ) {
-      Column {
-         Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+   Column {
+      Row(
+         Modifier.fillMaxWidth(),
+         horizontalArrangement = Arrangement.SpaceBetween,
+         verticalAlignment = Alignment.CenterVertically
+      ) {
+         Text(text = "Revenue History", style = MaterialTheme.typography.titleLarge)
+         ElevatedButton(
+            onClick = openDialog,
+            colors = ButtonColors(
+               containerColor = MaterialTheme.colorScheme.primary,
+               contentColor = MaterialTheme.colorScheme.onPrimary,
+               disabledContainerColor = Color.Gray,
+               disabledContentColor = Color.Gray
+            )
          ) {
-            Text(text = "Revenue History", style = MaterialTheme.typography.titleLarge)
-            ElevatedButton(
-               onClick = openDialog,
-               colors = ButtonColors(
-                  containerColor = MaterialTheme.colorScheme.primary,
-                  contentColor = MaterialTheme.colorScheme.onPrimary,
-                  disabledContainerColor = Color.Gray,
-                  disabledContentColor = Color.Gray
-               )
+            Row(
+               verticalAlignment = Alignment.CenterVertically
             ) {
-               Row(
-                  verticalAlignment = Alignment.CenterVertically
-               ) {
-                  Icon(imageVector = Icons.Filled.Add, contentDescription = "add button")
-                  Spacer(modifier = Modifier.width(5.dp))
-                  Text(text = "Add New", style = MaterialTheme.typography.bodyMedium)
-               }
+               Icon(imageVector = Icons.Filled.Add, contentDescription = "add button")
+               Spacer(modifier = Modifier.width(5.dp))
+               Text(text = "Add New", style = MaterialTheme.typography.bodyMedium)
             }
          }
-         Spacer(modifier = Modifier.height(8.dp))
-         if (income.isEmpty()) {
-            Column(
-               modifier = Modifier.fillMaxWidth(),
-               horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-               Icon(
-                  modifier = Modifier.size(64.dp),
-                  imageVector = Icons.Default.AccountBalanceWallet,
-                  contentDescription = "empty wallet",
-                  tint = MaterialTheme.colorScheme.primary.copy(
+      }
+      Spacer(modifier = Modifier.height(8.dp))
+      if (income.isEmpty()) {
+         Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+         ) {
+            Icon(
+               modifier = Modifier.size(64.dp),
+               imageVector = Icons.Default.AccountBalanceWallet,
+               contentDescription = "empty wallet",
+               tint = MaterialTheme.colorScheme.primary.copy(
+                  alpha = 0.5f
+               )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+               text = "No revenue history yet",
+               style = MaterialTheme.typography.titleMedium.copy(
+                  color = MaterialTheme.colorScheme.onSurface.copy(
+                     alpha = 0.7f
+                  )
+               )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+               text = "Tap Add New to record your first income",
+               style = MaterialTheme.typography.bodyMedium.copy(
+                  color = MaterialTheme.colorScheme.onSurface.copy(
                      alpha = 0.5f
                   )
                )
-               Spacer(modifier = Modifier.height(16.dp))
-               Text(
-                  text = "No revenue history yet",
-                  style = MaterialTheme.typography.titleMedium.copy(
-                     color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = 0.7f
-                     )
-                  )
+            )
+         }
+      } else {
+         income.forEach { income ->
+            key(income.id) {
+               ListTile(
+                  title = income.nameOfRevenue,
+                  trailing = "GHS ${income.amount.toDouble().toStringAsFixed()}"
                )
-               Spacer(modifier = Modifier.height(8.dp))
-               Text(
-                  text = "Tap Add New to record your first income",
-                  style = MaterialTheme.typography.bodyMedium.copy(
-                     color = MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = 0.5f
-                     )
-                  )
-               )
-            }
-         } else {
-            income.forEach { income ->
-               key(income.id) {
-                  ListTile(
-                     title = income.nameOfRevenue,
-                     trailing = "GHS ${income.amount.toDouble().toStringAsFixed()}"
-                  )
-               }
             }
          }
       }
@@ -296,79 +291,74 @@ fun IncomeExpensesChart(income: Double,expenses: Double) {
    val incomeValue = ((income * 170) / maxValue).toInt()
    val expensesValue = ((expenses * 170) / maxValue).toInt()
 
-   AnimatedVisibility(
-      visible = true,
-      enter = fadeIn()
-   ) {
-      Card {
-         Column(
+   Card {
+      Column(
+         modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+         horizontalAlignment = Alignment.Start
+      ) {
+         Text(
+            text = "Income Vs Expenses",
+            style = MaterialTheme.typography.titleLarge
+         )
+         Spacer(modifier = Modifier.height(16.dp))
+         Box(
             modifier = Modifier
-               .padding(16.dp)
-               .fillMaxWidth(),
-            horizontalAlignment = Alignment.Start
+               .fillMaxWidth()
+               .height(200.dp)
          ) {
-            Text(
-               text = "Income Vs Expenses",
-               style = MaterialTheme.typography.titleLarge
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Box(
-               modifier = Modifier
-                  .fillMaxWidth()
-                  .height(200.dp)
+            Column(
+               modifier = Modifier.align(Alignment.BottomStart)
             ) {
-               Column(
-                  modifier = Modifier.align(Alignment.BottomStart)
-               ) {
-                  //y-axis
-                  Row {
-                     if (maxValue != 0.0) {
-                        Box(
-                           modifier = Modifier
-                              .width(20.dp)
-                              .height(175.dp)
-                        ) {
-                           Text(
-                              text = maxValue.toStringAsFixed(),
-                              maxLines = 1
-                           )
-                        }
-                     }
-                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.Bottom
+               //y-axis
+               Row {
+                  if (maxValue != 0.0) {
+                     Box(
+                        modifier = Modifier
+                           .width(20.dp)
+                           .height(175.dp)
                      ) {
-                        Box(
-                           modifier = Modifier
-                              .height(incomeValue.dp)
-                              .width(20.dp)
-                              .background(color = MaterialTheme.colorScheme.primary)
-                        )
-                        Box(
-                           modifier = Modifier
-                              .height(expensesValue.dp)
-                              .width(20.dp)
-                              .background(color = MaterialTheme.colorScheme.secondary)
+                        Text(
+                           text = maxValue.toStringAsFixed(),
+                           maxLines = 1
                         )
                      }
-
                   }
-                  //x-axis
-                  Row {
-                     Text(text = "0")
-                     Spacer(modifier = Modifier.width(20.dp))
-                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround
-                     ) {
-                        Text(text = "Income")
-                        Text(text = "Expenses")
-                     }
-
+                  Row(
+                     modifier = Modifier.fillMaxWidth(),
+                     horizontalArrangement = Arrangement.SpaceAround,
+                     verticalAlignment = Alignment.Bottom
+                  ) {
+                     Box(
+                        modifier = Modifier
+                           .height(incomeValue.dp)
+                           .width(20.dp)
+                           .background(color = MaterialTheme.colorScheme.primary)
+                     )
+                     Box(
+                        modifier = Modifier
+                           .height(expensesValue.dp)
+                           .width(20.dp)
+                           .background(color = MaterialTheme.colorScheme.secondary)
+                     )
                   }
 
                }
+               //x-axis
+               Row {
+                  Text(text = "0")
+                  Spacer(modifier = Modifier.width(20.dp))
+                  Row(
+                     modifier = Modifier.fillMaxWidth(),
+                     horizontalArrangement = Arrangement.SpaceAround
+                  ) {
+                     Text(text = "Income")
+                     Text(text = "Expenses")
+                  }
+
+               }
+
             }
          }
       }
