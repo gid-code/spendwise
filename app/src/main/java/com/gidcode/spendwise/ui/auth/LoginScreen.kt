@@ -162,9 +162,6 @@ fun LoginScreenContent(
             onClick = {
                if (isFormValid){
                   login.invoke(UIEvents.LoginUser(LoginDomainModel(email,password)))
-//                  authViewModel.loginUser(
-//                     LoginDomainModel(email,password)
-//                  )
                }
             },
             enabled = !uiState.isLoading,

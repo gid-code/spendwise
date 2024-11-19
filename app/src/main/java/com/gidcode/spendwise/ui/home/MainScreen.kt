@@ -47,14 +47,14 @@ fun MainScreenContent(){
 
    Scaffold (
       floatingActionButton = {
-         FloatingActionButton(onClick = { /*TODO*/ }) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "fab icon" )
+         if (navController.currentDestination?.route == Destination.Expenses.route) {
+            FloatingActionButton(onClick = { navController.navigate(Destination.AddExpenses.route) }) {
+               Icon(imageVector = Icons.Default.Add, contentDescription = "fab icon")
+            }
          }
       },
       bottomBar = {
-         NavigationBar(
-//            containerColor = MaterialTheme.colorScheme.surface
-         ) {
+         NavigationBar {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
 
