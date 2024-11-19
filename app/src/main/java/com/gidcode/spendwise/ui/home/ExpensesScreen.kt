@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Cake
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -25,8 +26,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,11 +40,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
+import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.ListTile
 import com.gidcode.spendwise.ui.common.PreviewContent
 import com.gidcode.spendwise.ui.common.ViewModelProvider
+import com.gidcode.spendwise.ui.navigation.Destination
+import com.gidcode.spendwise.ui.navigation.Navigator
 import com.gidcode.spendwise.ui.theme.otherGradientColor
+import com.gidcode.spendwise.util.getIconForItem
+import com.gidcode.spendwise.util.getUniqueColor
 import com.gidcode.spendwise.util.toStringAsFixed
+import com.google.accompanist.insets.navigationBarsWithImePadding
 
 @Composable
 fun ExpensesScreen() {
@@ -52,7 +63,18 @@ fun ExpensesScreen() {
 
 @Composable
 fun ExpensesScreenContent(uiState: UIState) {
+   val navController = Navigator.current
+   var showError by remember { mutableStateOf(false) }
 
+   LaunchedEffect(key1 = uiState) {
+      if (!uiState.isAuthorized) {
+         navController.navigate(Destination.OnBoarding.route) {
+            popUpTo(Destination.Main.route) { inclusive = true }
+         }
+      }else if (uiState.error != null){
+         showError = true
+      }
+   }
 
 //   Scaffold(
 //      floatingActionButton = {
@@ -142,6 +164,30 @@ fun ExpensesScreenContent(uiState: UIState) {
                }
             }
          }
+
+         Box(
+            modifier = Modifier
+               .align(Alignment.BottomCenter)
+               .padding(bottom = 100.dp)
+               .navigationBarsWithImePadding()
+         ) {
+            uiState.error?.message?.let {
+               ErrorViewWithoutButton(text = it, visible = showError) {
+                  showError = false
+               }
+            }
+         }
+         if (uiState.isLoading && uiState.expenseList.isEmpty()) {
+            Box(
+               modifier = Modifier
+                  .fillMaxSize()
+                  .background(color = Color.Black.copy(alpha = 0.5f))
+            ){
+               CircularProgressIndicator(
+                  modifier = Modifier.align(alignment = Alignment.Center)
+               )
+            }
+         }
       }
 
    }
@@ -150,6 +196,7 @@ fun ExpensesScreenContent(uiState: UIState) {
 
 @Composable
 fun ExpensesItemTitle(expense: ExpenseItemDomainModel) {
+   val color = expense.nameOfItem.getUniqueColor()
    Box(
       modifier = Modifier
          .fillMaxWidth()
@@ -164,13 +211,14 @@ fun ExpensesItemTitle(expense: ExpenseItemDomainModel) {
             verticalAlignment = Alignment.CenterVertically
          ){
             Box(modifier = Modifier.size(40.dp)
-               .background(color = Color.Red.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
+               .background(color = color.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
             )
             {
                Icon(
-                  imageVector = Icons.Default.Cake,
+                  imageVector = expense.nameOfItem.getIconForItem(),
                   contentDescription = "cake",
-                  modifier = Modifier.align(Alignment.Center)
+                  modifier = Modifier.align(Alignment.Center),
+                  tint = color.copy(alpha = 1f)
                )
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -179,10 +227,8 @@ fun ExpensesItemTitle(expense: ExpenseItemDomainModel) {
             )
          }
          Text(text = "GHS ${expense.estimatedAmount.toDouble().toStringAsFixed()}",
-            style = MaterialTheme.typography.titleMedium.copy(
-               color = MaterialTheme.colorScheme.primary,
-               fontWeight = FontWeight.Bold
-            )
+            fontWeight = FontWeight.Bold,
+            color = color.copy(alpha = 1f),
          )
       }
    }

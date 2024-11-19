@@ -3,4 +3,5 @@
     <string name="onboarding_msg">Spend Smarter Save More</string>
     <string name="login">Sign in to your account</string>
     <string name="signup">Register</string>
+    <string name="try_again">Try again</string>
 </resources>
