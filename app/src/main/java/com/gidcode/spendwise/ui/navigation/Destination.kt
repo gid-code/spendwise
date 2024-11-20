@@ -11,6 +11,11 @@ sealed class Destination(val route: String) {
    data object Expenses : Destination("expenses")
    data object Profile : Destination("profile")
    data object Settings: Destination("settings")
+   data object SettingsScreen: Destination("settings-screen")
+   data object AccountInfo: Destination("settings-account-information")
+   data object Appearance: Destination("settings-appearance")
+   data object Privacy: Destination("settings-privacy")
+   data object ConfirmLogout: Destination("confirm-logout")
    data object AddIncome: Destination("add-income")
    data object AddExpenses: Destination("add-expenses")
 }

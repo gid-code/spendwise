@@ -25,6 +25,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.gidcode.spendwise.ui.common.PreviewContent
+import com.gidcode.spendwise.ui.home.settings.SettingsScreen
+import com.gidcode.spendwise.ui.home.settings.settingsGraph
 import com.gidcode.spendwise.ui.navigation.BottomNavItems
 import com.gidcode.spendwise.ui.navigation.Destination
 
@@ -102,10 +104,7 @@ fun MainScreenContent(){
          composable(route = Destination.Expenses.route){
             ExpensesScreen()
          }
-
-         composable(route = Destination.Settings.route){
-            ProfileScreen()
-         }
+         settingsGraph()
       }
    }
 }

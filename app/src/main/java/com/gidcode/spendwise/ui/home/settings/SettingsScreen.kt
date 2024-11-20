@@ -1,6 +1,7 @@
 package com.gidcode.spendwise.ui.home.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gidcode.spendwise.ui.common.PreviewContent
+import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.theme.otherGradientColor
 
 @Composable
@@ -202,7 +204,14 @@ fun SettingsTile(title: String, icon: ImageVector){
    Row(
       modifier = Modifier
          .fillMaxWidth()
-         .padding(vertical = 8.dp),
+         .padding(vertical = 8.dp)
+         .clickable {
+            var route = ""
+            if (title == "Account Information") {
+
+            }
+         }
+      ,
       horizontalArrangement = Arrangement.SpaceBetween
    ) {
       Row {
@@ -213,6 +222,7 @@ fun SettingsTile(title: String, icon: ImageVector){
       Icon(imageVector = Icons.Default.ChevronRight, contentDescription = "arrow")
    }
 }
+
 
 @Preview(name = "Settings")
 @Composable
