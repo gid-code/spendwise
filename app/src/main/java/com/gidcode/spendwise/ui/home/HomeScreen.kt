@@ -58,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gidcode.spendwise.domain.model.Exception
+import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
 import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
 import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.ListTile
@@ -462,9 +463,11 @@ fun HomeScreenPreview() {
                IncomeItemDomainModel("ddd","Salary",30),
                IncomeItemDomainModel("334","Gig",1000)
             ),
+            expenseList = listOf(
+               ExpenseItemDomainModel("ddd","Salary",30),
+
+            ),
             isLoading = false,
-            totalExpense = 900.0,
-            totalIncome = 10000.0,
          )
       )
    }

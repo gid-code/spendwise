@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
 import com.gidcode.spendwise.data.network.SharedAuthState
+import com.gidcode.spendwise.domain.model.AddExpenseDomainModel
 import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
 import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
@@ -34,6 +35,7 @@ class HomeViewModel @Inject constructor(
    fun handleEvent(homeEvents: UIEvents) {
       when (homeEvents) {
          is UIEvents.AddIncome -> addIncome(homeEvents.data)
+         is UIEvents.AddExpense -> addExpense(homeEvents.data)
       }
    }
 
@@ -62,6 +64,10 @@ class HomeViewModel @Inject constructor(
    private fun income(){
       viewModelScope.launch {
          _uiState.value = UIState(isLoading = true)
+         if (_token == null){
+            _uiState.value = UIState(isLoading = false, error = Exception.UnAuthorizedException())
+            return@launch
+         }
          val result = repository.incomes(_token!!)
          result.fold(
             { failure ->
@@ -72,7 +78,14 @@ class HomeViewModel @Inject constructor(
             { data ->
                println(data)
                _uiState.update { currentState ->
-                  currentState.copy(isLoading = false, incomeList = data, addIncome = null)
+                  val totalIncome = data.fold(0.0) { sum, item -> sum + item.amount }
+                  currentState.copy(
+                     isLoading = false,
+                     incomeList = data,
+                     totalIncome = totalIncome,
+                     balance = (totalIncome - currentState.totalExpense).toStringAsFixed(),
+                     addIncome = null
+                  )
                }
             }
          )
@@ -82,17 +95,28 @@ class HomeViewModel @Inject constructor(
    private fun expenditure(){
       viewModelScope.launch {
          _uiState.value = UIState(isLoading = true)
+         if (_token == null){
+            _uiState.value = UIState(isLoading = false, error = Exception.UnAuthorizedException())
+            return@launch
+         }
          val result = repository.expenses(_token!!)
          result.fold(
             { failure ->
                _uiState.update { currentState ->
-                  currentState.copy(isLoading = false, error = failure)
+                  currentState.copy(isLoading = false, error = failure, addExpense = null)
                }
             },
             { data ->
                println(data)
                _uiState.update { currentState ->
-                  currentState.copy(isLoading = false, expenseList = data)
+                  val totalExpense = data.fold(0.0){ sum, item -> sum + item.estimatedAmount}
+                  currentState.copy(
+                     isLoading = false,
+                     expenseList = data,
+                     totalExpense = totalExpense,
+                     balance = (currentState.totalIncome - totalExpense).toStringAsFixed(),
+                     addExpense = null
+                  )
                }
             }
          )
@@ -125,7 +149,16 @@ class HomeViewModel @Inject constructor(
                   },
                   {data2 ->
                      _uiState.update { currentState ->
-                        currentState.copy(isLoading = false, incomeList = data, expenseList = data2)
+                        val totalIncome = data.fold(0.0) { sum, item -> sum + item.amount }
+                        val totalExpense = data2.fold(0.0){ sum, item -> sum + item.estimatedAmount}
+                        currentState.copy(
+                           isLoading = false,
+                           incomeList = data,
+                           expenseList = data2,
+                           totalIncome = totalIncome,
+                           totalExpense = totalExpense,
+                           balance = (totalIncome - totalExpense).toStringAsFixed()
+                        )
                      }
                   }
                )
@@ -158,6 +191,30 @@ class HomeViewModel @Inject constructor(
       }
    }
 
+   private fun addExpense(data: AddExpenseDomainModel) {
+      viewModelScope.launch {
+         _uiState.value = UIState(isLoading = true)
+         if (_token == null){
+            _uiState.value = UIState(isLoading = false, error = Exception.UnAuthorizedException())
+            return@launch
+         }
+         val result = repository.addExpense(_token!!,data)
+         result.fold(
+            {failure->
+               _uiState.update { currentState ->
+                  currentState.copy(isLoading = false, error = failure)
+               }
+            },
+            {data->
+               _uiState.update { currentState ->
+                  currentState.copy(isLoading = false, addExpense = data)
+               }
+               expenditure()
+            }
+         )
+      }
+   }
+
    private fun onUnauthorized() {
       viewModelScope.launch {
          dataStore.clearData()
@@ -180,7 +237,8 @@ data class UIState(
    val totalIncome: Double = incomeList.fold(0.0) { sum, item -> sum + item.amount },
    val totalExpense: Double = expenseList.fold(0.0){ sum, item -> sum + item.estimatedAmount},
    val balance: String = (totalIncome - totalExpense).toStringAsFixed(),
-   val addIncome: String? = null
+   val addIncome: String? = null,
+   val addExpense: String? = null
 ){
    fun groupExpensesByCategory(): List<Pair<String, List<ExpenseItemDomainModel>>>{
 //      val groupedExpenses = mapOf<String,List<ExpenseItemDomainModel>>()
@@ -197,4 +255,5 @@ data class UIState(
 @Stable
 sealed class UIEvents {
    class AddIncome(val data: AddIncomeDomainModel) : UIEvents()
+   class AddExpense(val data: AddExpenseDomainModel) : UIEvents()
 }

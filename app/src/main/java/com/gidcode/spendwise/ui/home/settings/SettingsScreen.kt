@@ -47,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gidcode.spendwise.ui.common.PreviewContent
 import com.gidcode.spendwise.ui.navigation.Destination
+import com.gidcode.spendwise.ui.navigation.Navigator
 import com.gidcode.spendwise.ui.theme.otherGradientColor
 
 @Composable
@@ -56,6 +57,7 @@ fun SettingsScreen(){
 
 @Composable
 fun SettingsScreenContent() {
+   val navController = Navigator.current
    Surface(
       modifier = Modifier
          .fillMaxSize()
@@ -121,7 +123,8 @@ fun SettingsScreenContent() {
                      tiles = {
                         SettingsTile(
                            title = "Account Information",
-                           icon = Icons.Outlined.Info
+                           icon = Icons.Outlined.Info,
+                           onClick = { navController.navigate(Destination.AccountInfo.route) }
                         )
                      }
                   )
@@ -131,11 +134,13 @@ fun SettingsScreenContent() {
                      tiles = {
                         SettingsTile(
                            title = "Appearance",
-                           icon = Icons.Default.Palette
+                           icon = Icons.Default.Palette,
+                           onClick = { navController.navigate(Destination.Appearance.route) }
                         )
                         SettingsTile(
                            title = "Notifications",
-                           icon = Icons.Default.Notifications
+                           icon = Icons.Default.Notifications,
+                           onClick = { }
                         )
                      }
                   )
@@ -145,7 +150,8 @@ fun SettingsScreenContent() {
                      tiles = {
                         SettingsTile(
                            title = "Privacy and Security",
-                           icon = Icons.Default.Lock
+                           icon = Icons.Default.Lock,
+                           onClick = { navController.navigate(Destination.Privacy.route) }
                         )
                      }
                   )
@@ -155,7 +161,8 @@ fun SettingsScreenContent() {
                      tiles = {
                         SettingsTile(
                            title = "About Us",
-                           icon = Icons.Default.Business
+                           icon = Icons.Default.Business,
+                           onClick = { }
                         )
                      }
                   )
@@ -200,16 +207,19 @@ fun SettingsSection(title: String, icon: ImageVector, tiles: @Composable ()-> Un
 }
 
 @Composable
-fun SettingsTile(title: String, icon: ImageVector){
+fun SettingsTile(title: String, icon: ImageVector, onClick: ()->Unit){
    Row(
       modifier = Modifier
          .fillMaxWidth()
          .padding(vertical = 8.dp)
          .clickable {
-            var route = ""
-            if (title == "Account Information") {
-
-            }
+//            var route = ""
+//            if (title == "Account Information") {
+//               route = Destination.AccountInfo.route
+//            }else if (title == "Appearance") {
+//               route = Destination.Appearance.route
+//            }
+            onClick()
          }
       ,
       horizontalArrangement = Arrangement.SpaceBetween

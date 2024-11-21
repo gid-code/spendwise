@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,21 +30,43 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.gidcode.spendwise.domain.model.AddExpenseDomainModel
+import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
 import com.gidcode.spendwise.ui.common.PreviewContent
+import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.navigation.Navigator
 
 @Composable
 fun AddExpensesDialog() {
+   val homeViewModel = ViewModelProvider.homeViewModel
+   val uiState by homeViewModel.uiState.collectAsState()
+   val uiEvent: (UIEvents) -> Unit = homeViewModel::handleEvent
 
-   AddExpensesContent()
+   AddExpensesContent(
+      uiState, uiEvent
+   )
 }
 
 @Composable
-fun AddExpensesContent() {
+fun AddExpensesContent(
+   uiState: UIState,
+   addExpense: (UIEvents) -> Unit
+) {
    val navController = Navigator.current
    var name by remember { mutableStateOf("") }
    var category by remember { mutableStateOf("") }
    var amount by remember { mutableStateOf("") }
+
+   val isFormValid by remember { derivedStateOf {
+      name.isNotBlank() && category.isNotBlank() && amount.isNotBlank()
+   } }
+
+   LaunchedEffect(key1 = uiState) {
+      if (uiState.addExpense != null){
+         navController.popBackStack()
+      }
+   }
+
    Dialog(onDismissRequest = { navController.popBackStack() }) {
       Column(
          Modifier
@@ -65,6 +91,7 @@ fun AddExpensesContent() {
             onValueChange = {name = it},
             label = { Text("Name") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
          )
 
@@ -75,6 +102,7 @@ fun AddExpensesContent() {
             onValueChange = {category = it},
             label = { Text("Category") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
          )
 
@@ -85,6 +113,7 @@ fun AddExpensesContent() {
             onValueChange = {amount = it},
             label = { Text("Estimated Amount") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
          )
 
@@ -99,10 +128,21 @@ fun AddExpensesContent() {
                   style = MaterialTheme.typography.titleMedium
                )
             }
-            ElevatedButton(onClick = { /*TODO*/ }) {
-               Text(text = "Submit",
-                  style = MaterialTheme.typography.titleMedium
-               )
+            ElevatedButton(onClick = {
+               if (isFormValid){
+                  addExpense.invoke(UIEvents.AddExpense(AddExpenseDomainModel(name,category,amount.toDouble())))
+               }
+            }) {
+               if (uiState.isLoading) {
+                  CircularProgressIndicator(
+                     color = MaterialTheme.colorScheme.onPrimary
+                  )
+               } else {
+                  Text(
+                     text = "Submit",
+                     style = MaterialTheme.typography.titleMedium
+                  )
+               }
             }
          }
       }
@@ -113,7 +153,10 @@ fun AddExpensesContent() {
 @Composable
 fun AddExpensesDialogPreview() {
    PreviewContent {
-      AddExpensesContent()
+      AddExpensesContent(
+         uiState = UIState(),
+         addExpense = {}
+      )
    }
 }
 
@@ -121,6 +164,9 @@ fun AddExpensesDialogPreview() {
 @Composable
 fun AddExpensesDialogDarkPreview() {
    PreviewContent(darkTheme = true) {
-      AddExpensesContent()
+      AddExpensesContent(
+         uiState = UIState(),
+         addExpense = {}
+      )
    }
 }

@@ -1,5 +1,6 @@
 package com.gidcode.spendwise.data.datasource.remote
 
+import com.gidcode.spendwise.data.datasource.remote.model.AddExpenseApiModel
 import com.gidcode.spendwise.data.datasource.remote.model.AddIncomeApiModel
 import com.gidcode.spendwise.data.datasource.remote.model.ExpenseItemApi
 import com.gidcode.spendwise.data.datasource.remote.model.IncomeItemApi
@@ -19,8 +20,13 @@ class HomeRemoteDataSource(
       return service.expenditure(auth)
    }
 
-   suspend fun addIncome(token: String,data: AddIncomeApiModel): String {
+   suspend fun addIncome(token: String,data: AddIncomeApiModel) {
       val auth = "Bearer $token"
       return service.addIncome(auth,data)
+   }
+
+   suspend fun addExpense(token: String,data: AddExpenseApiModel) {
+      val auth = "Bearer $token"
+      return service.addExpense(auth,data)
    }
 }

@@ -1,5 +1,6 @@
 package com.gidcode.spendwise.data.network.service
 
+import com.gidcode.spendwise.data.datasource.remote.model.AddExpenseApiModel
 import com.gidcode.spendwise.data.datasource.remote.model.AddIncomeApiModel
 import com.gidcode.spendwise.data.datasource.remote.model.ExpenseItemApi
 import com.gidcode.spendwise.data.datasource.remote.model.IncomeItemApi
@@ -38,5 +39,11 @@ interface SpendWiseService {
    suspend fun addIncome(
       @Header(AUTHORIZATION_KEY) token: String,
       @Body request: AddIncomeApiModel
-   ): String
+   )
+
+   @POST(MyLadderApi.EXPENDITURE)
+   suspend fun addExpense(
+      @Header(AUTHORIZATION_KEY) token: String,
+      @Body request: AddExpenseApiModel
+   )
 }

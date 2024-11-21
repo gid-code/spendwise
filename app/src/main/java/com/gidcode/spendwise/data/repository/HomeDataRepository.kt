@@ -1,9 +1,7 @@
 package com.gidcode.spendwise.data.repository
 
-import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
 import com.gidcode.spendwise.data.datasource.remote.HomeRemoteDataSource
-import com.gidcode.spendwise.data.network.AuthEventHandler
-import com.gidcode.spendwise.data.network.AuthInterceptor
+import com.gidcode.spendwise.domain.model.AddExpenseDomainModel
 import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
 import com.gidcode.spendwise.domain.model.Exception as Failure
 import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
@@ -12,18 +10,10 @@ import com.gidcode.spendwise.domain.repository.HomeRepository
 import com.gidcode.spendwise.util.Either
 import com.gidcode.spendwise.util.left
 import com.gidcode.spendwise.util.right
-import javax.inject.Inject
 
 class HomeDataRepository(
-   private val remoteDataSource: HomeRemoteDataSource,
-//   private val authInterceptor: AuthInterceptor
+   private val remoteDataSource: HomeRemoteDataSource
 ): HomeRepository {
-//   @Inject
-//   lateinit var authEventHandler: AuthEventHandler
-//
-//   init {
-//      authInterceptor.authEventHandler = authEventHandler
-//   }
 
    override suspend fun incomes(token: String): Either<Failure, List<IncomeItemDomainModel>> {
       return try {
@@ -54,15 +44,23 @@ class HomeDataRepository(
       data: AddIncomeDomainModel
    ): Either<com.gidcode.spendwise.domain.model.Exception, String> {
       return try {
-         val result = remoteDataSource.addIncome(token,data.toApi())
-         right(result)
+         remoteDataSource.addIncome(token,data.toApi())
+         right("Income Added")
       }catch (e: Exception){
          left(Failure.General(e.localizedMessage))
       }
    }
 
-//   override fun setAuthEventHandler(handler: AuthEventHandler) {
-//      authInterceptor.authEventHandler = handler
-//   }
+   override suspend fun addExpense(
+      token: String,
+      data: AddExpenseDomainModel
+   ): Either<com.gidcode.spendwise.domain.model.Exception, String> {
+      return try {
+         remoteDataSource.addExpense(token,data.toApi())
+         right("Expense Added")
+      }catch (e: Exception){
+         left(Failure.General(e.localizedMessage))
+      }
+   }
 
 }

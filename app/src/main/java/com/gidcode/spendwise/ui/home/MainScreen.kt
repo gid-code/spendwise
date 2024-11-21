@@ -3,6 +3,7 @@ package com.gidcode.spendwise.ui.home
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -29,17 +30,18 @@ import com.gidcode.spendwise.ui.home.settings.SettingsScreen
 import com.gidcode.spendwise.ui.home.settings.settingsGraph
 import com.gidcode.spendwise.ui.navigation.BottomNavItems
 import com.gidcode.spendwise.ui.navigation.Destination
+import com.gidcode.spendwise.ui.navigation.Navigator
 
 @Composable
 fun MainScreen() {
    MainScreenContent()
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
 @Composable
 fun MainScreenContent(){
-//   val navController = Navigator.current
-   val navController = rememberNavController()
+   val navController = Navigator.current
+//   val navController = rememberNavController()
 
    val items = mutableListOf(
       BottomNavItems.HomeItem,
@@ -92,19 +94,21 @@ fun MainScreenContent(){
             }
          }
       }
-   ){
-      NavHost(
-         navController = navController,
-         route = Destination.Main.route,
-         startDestination = Destination.Home.route
-      ) {
-         composable(route = Destination.Home.route){
-            HomeScreen()
+   ){padding->
+      Box(modifier = Modifier.padding(bottom = padding.calculateBottomPadding())) {
+         NavHost(
+            navController = navController,
+            route = Destination.Main.route,
+            startDestination = Destination.Home.route
+         ) {
+            composable(route = Destination.Home.route) {
+               HomeScreen()
+            }
+            composable(route = Destination.Expenses.route) {
+               ExpensesScreen()
+            }
+            settingsGraph()
          }
-         composable(route = Destination.Expenses.route){
-            ExpensesScreen()
-         }
-         settingsGraph()
       }
    }
 }

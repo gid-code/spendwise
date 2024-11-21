@@ -11,7 +11,7 @@ fun NavGraphBuilder.settingsGraph(){
       startDestination = Destination.SettingsScreen.route
    ) {
       composable(Destination.SettingsScreen.route) { SettingsScreen() }
-      composable(Destination.AccountInfo.route) {  }
+      composable(Destination.AccountInfo.route) { AccountInfoScreen() }
       composable(Destination.Appearance.route) {  }
    }
 }

@@ -24,9 +24,9 @@ object MyLadderApiClient {
    ): OkHttpClient {
       val httpClient = OkHttpClient.Builder()
          .addInterceptor(NetworkStatusInterceptor(ConnectionManager(context)))
+         .addInterceptor(authInterceptor)
          .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY) as Interceptor)
          .addInterceptor(DefaultHeadersAdderRetrofitInterceptor())
-         .addInterceptor(authInterceptor)
          .callTimeout(TIMEOUT_DEFAULT_CONFIGURATION, TimeUnit.SECONDS)
 
       return httpClient.build()
