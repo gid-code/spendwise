@@ -188,8 +188,7 @@ fun HomeScreenContent(
          Box(
             modifier = Modifier
                .align(Alignment.BottomCenter)
-               .padding(bottom = 100.dp)
-               .navigationBarsWithImePadding()
+               .padding(bottom = 20.dp)
          ) {
             uiState.error?.message?.let {
                ErrorViewWithoutButton(text = it, visible = showError) {

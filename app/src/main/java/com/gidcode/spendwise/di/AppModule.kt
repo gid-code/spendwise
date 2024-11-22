@@ -11,8 +11,10 @@ import com.gidcode.spendwise.data.network.client.MyLadderApiClient
 import com.gidcode.spendwise.data.network.service.SpendWiseService
 import com.gidcode.spendwise.data.repository.AuthDataRepository
 import com.gidcode.spendwise.data.repository.HomeDataRepository
+import com.gidcode.spendwise.data.repository.SettingsDataRepository
 import com.gidcode.spendwise.domain.repository.AuthRepository
 import com.gidcode.spendwise.domain.repository.HomeRepository
+import com.gidcode.spendwise.domain.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -73,5 +75,10 @@ object AppModule {
       dataSource: HomeRemoteDataSource,
    ): HomeRepository = HomeDataRepository(dataSource)
 
+   @Provides
+   @Singleton
+   fun provideSettingsRepository(
+      dataSource: SpendWiseDataStore
+   ): SettingsRepository = SettingsDataRepository(dataSource)
 
 }

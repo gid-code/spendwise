@@ -1,6 +1,5 @@
 package com.gidcode.spendwise.ui.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,13 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.Navigation
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.gidcode.spendwise.ui.common.PreviewContent
-import com.gidcode.spendwise.ui.home.settings.SettingsScreen
 import com.gidcode.spendwise.ui.home.settings.settingsGraph
 import com.gidcode.spendwise.ui.navigation.BottomNavItems
 import com.gidcode.spendwise.ui.navigation.Destination
@@ -39,7 +41,7 @@ fun MainScreen() {
 
 
 @Composable
-fun MainScreenContent(){
+fun MainScreenContent() {
    val navController = Navigator.current
 //   val navController = rememberNavController()
 
@@ -96,6 +98,9 @@ fun MainScreenContent(){
       }
    ){padding->
       Box(modifier = Modifier.padding(bottom = padding.calculateBottomPadding())) {
+//         mainScreenGraph()
+
+
          NavHost(
             navController = navController,
             route = Destination.Main.route,
@@ -109,6 +114,27 @@ fun MainScreenContent(){
             }
             settingsGraph()
          }
+      }
+   }
+}
+
+fun NavGraphBuilder.mainScreenGraph() {
+   navigation(
+      route = Destination.Main.route,
+      startDestination = Destination.Home.route
+   ){
+      composable(route = Destination.Home.route) {
+         HomeScreen()
+      }
+      composable(route = Destination.Expenses.route) {
+         ExpensesScreen()
+      }
+      settingsGraph()
+      dialog(route = Destination.AddIncome.route){
+         AddIncomeDialog()
+      }
+      dialog(route = Destination.AddExpenses.route){
+         AddExpensesDialog()
       }
    }
 }

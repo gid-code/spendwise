@@ -210,20 +210,6 @@ fun LoginScreenContent(
          Spacer(modifier = Modifier.height(25.dp))
 
       }
-//         Column(
-//            modifier = Modifier.fillMaxSize(),
-//            verticalArrangement = Arrangement.Top
-//         ) {
-//            Spacer(modifier = Modifier.fillMaxHeight(0.1f))
-//
-//            if (showError){
-//               uiState.error?.message?.let {
-//                  ErrorViewWithoutButton(text = it,visible = showError) {
-//                     showError = false
-//                  }
-//               }
-//            }
-//         }
 
          Box(
             modifier = Modifier

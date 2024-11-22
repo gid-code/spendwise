@@ -6,6 +6,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gidcode.spendwise.ui.auth.AuthViewModel
 import com.gidcode.spendwise.ui.home.HomeViewModel
+import com.gidcode.spendwise.ui.home.settings.SettingsViewModel
 
 object ViewModelProvider {
    val authToken: AuthViewModel
@@ -15,31 +16,35 @@ object ViewModelProvider {
    val homeViewModel: HomeViewModel
       @Composable
       get() = LocalHomeViewModel.current
-//
-//   val podcastPlayer: PodcastPlayerViewModel
-//      @Composable
-//      get() = LocalPodcastPlayerViewModel.current
+
+   val settingsViewModel: SettingsViewModel
+      @Composable
+      get() = LocalSettingsViewModel.current
 }
 
 @Composable
 fun ProvideMultiViewModel(content: @Composable () -> Unit) {
-   val viewModel1: AuthViewModel = viewModel()
-   val viewModel2: HomeViewModel = viewModel()
-//   val viewModel3: PodcastPlayerViewModel = viewModel()
+   val viewModel1: SettingsViewModel = viewModel()
+   val viewModel2: AuthViewModel = viewModel()
+   val viewModel3: HomeViewModel = viewModel()
 
    CompositionLocalProvider(
-      LocalAuthViewModel provides viewModel1,
+      LocalSettingsViewModel provides viewModel1,
    ) {
       CompositionLocalProvider(
-         LocalHomeViewModel provides viewModel2,
+         LocalAuthViewModel provides viewModel2,
       ) {
-//         CompositionLocalProvider(
-//            LocalPodcastPlayerViewModel provides viewModel3,
-//         ) {
+         CompositionLocalProvider(
+            LocalHomeViewModel provides viewModel3,
+         ) {
             content()
-//         }
+         }
       }
    }
+}
+
+private val LocalSettingsViewModel = staticCompositionLocalOf<SettingsViewModel> {
+   error("No SettingsViewModel provided")
 }
 
 private val LocalAuthViewModel = staticCompositionLocalOf<AuthViewModel> {

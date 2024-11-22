@@ -14,6 +14,7 @@ class SpendWiseDataStore(
    private val context: Context
 ) {
    private val accessToken = stringPreferencesKey("access_token")
+   private val theme = stringPreferencesKey("theme_mode")
 
    companion object {
       private const val TAG = "SpendWiseDataStore"
@@ -28,6 +29,18 @@ class SpendWiseDataStore(
    suspend fun getAccessToken(): Flow<String?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[accessToken]
+      }
+   }
+
+   suspend fun storeThemeMode(data: String) {
+      context.spendWiseDataStore.edit { preferences ->
+         preferences[theme] = data
+      }
+   }
+
+   fun getThemeMode(): Flow<String?> {
+      return context.spendWiseDataStore.data.map { preferences ->
+         preferences[theme]
       }
    }
 
