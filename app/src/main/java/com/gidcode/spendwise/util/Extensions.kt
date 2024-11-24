@@ -38,7 +38,7 @@ fun String.getUniqueColor() : Color {
 }
 
 fun String.getIconForItem(): ImageVector {
-   val lowercaseItemName = this.lowercase();
+   val lowercaseItemName = this.lowercase()
    if (lowercaseItemName.contains("groceries")) {
       return Icons.Default.ShoppingCart
    } else if (lowercaseItemName.contains("restaurant")) {

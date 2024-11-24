@@ -23,8 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-   private val repository: HomeRepository,
-   private val dataStore: SpendWiseDataStore
+   private val repository: HomeRepository
 ): ViewModel() {
 
    private val _uiState = MutableStateFlow(UIState())
@@ -54,7 +53,7 @@ class HomeViewModel @Inject constructor(
       }
 
       viewModelScope.launch {
-         dataStore.getAccessToken().collectLatest { value->
+         repository.getAccessToken().collectLatest { value->
             _token = value
             fetchAll()
          }
@@ -217,7 +216,7 @@ class HomeViewModel @Inject constructor(
 
    private fun onUnauthorized() {
       viewModelScope.launch {
-         dataStore.clearData()
+         repository.clearAccessToken()
 //         delay(200)
 //         println("error to navigate")
 //         _uiState.value = UIState(error = Exception.UnAuthorizedException())

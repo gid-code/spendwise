@@ -1,10 +1,5 @@
 package com.gidcode.spendwise.ui.home
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -50,14 +44,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
 import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
 import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
@@ -67,10 +58,7 @@ import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
 import com.gidcode.spendwise.ui.theme.otherGradientColor
-import com.gidcode.spendwise.util.Orientation
-import com.gidcode.spendwise.util.addMoveAnimation
 import com.gidcode.spendwise.util.toStringAsFixed
-import com.google.accompanist.insets.navigationBarsWithImePadding
 
 
 @Composable
@@ -369,12 +357,6 @@ fun IncomeExpensesChart(income: Double,expenses: Double) {
 fun SummaryCard(balance: String, income: Double, expense: Double, visible : Boolean = true) {
 
    Card (
-      modifier = Modifier.addMoveAnimation(
-         orientation = Orientation.Vertical,
-         from = 0.dp,
-         to = 10.dp,
-         duration = 200
-      ),
       colors = CardColors(
          containerColor = MaterialTheme.colorScheme.primary,
          contentColor = MaterialTheme.colorScheme.primary,

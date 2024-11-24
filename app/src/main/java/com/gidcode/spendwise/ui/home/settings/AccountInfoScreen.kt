@@ -4,43 +4,66 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gidcode.spendwise.domain.model.User
 import com.gidcode.spendwise.ui.common.PreviewContent
+import com.gidcode.spendwise.ui.common.ViewModelProvider
+import com.gidcode.spendwise.ui.navigation.Navigator
 
 @Composable
 fun AccountInfoScreen() {
-   AccountInfoContent()
+   val settingsViewModel = ViewModelProvider.settingsViewModel
+   val user by settingsViewModel.user.collectAsState()
+   AccountInfoContent(
+      user
+   )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountInfoContent(){
+fun AccountInfoContent(user: User) {
+   val navController = Navigator.current
    Scaffold(
       topBar = {
-         TopAppBar(title = {
-            Text("Account Information")
-         })
+         TopAppBar(
+            title = {
+               Text("Account Information")
+            },
+            navigationIcon = {
+               IconButton(
+                  onClick = {
+                     navController.popBackStack()
+                  }
+               ) {
+                  Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBackIos, contentDescription = "")
+               }
+            }
+         )
       }
    ) {padding->
       Column(
          modifier = Modifier.padding(vertical = padding.calculateTopPadding(), horizontal = 16.dp)
       ) {
-         InfoTile(label= "Name", value= "John Doe")
-         InfoTile(label= "Email", value= "johndoe@gmail.com")
+         InfoTile(label= "Name", value= user.name)
+         InfoTile(label= "Email", value= user.email)
       }
    }
 }
@@ -71,7 +94,7 @@ fun InfoTile(label: String,value: String) {
 @Composable
 fun AccountInfoPreview() {
    PreviewContent {
-      AccountInfoContent()
+      AccountInfoContent(User("Mike Gooden","mikkey@gmail.com"))
    }
 }
 
@@ -79,6 +102,6 @@ fun AccountInfoPreview() {
 @Composable
 fun AccountInfoDarkPreview() {
    PreviewContent(darkTheme = true) {
-      AccountInfoContent()
+      AccountInfoContent(User("Sam Moo","sammoo@g.com"))
    }
 }

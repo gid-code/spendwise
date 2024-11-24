@@ -138,7 +138,6 @@ fun SpendWiseApp(){
          NavHost(navController, Destination.Splash.route) {
             composable(Destination.Splash.route) { SplashScreen() }
             authGraph()
-//            composable(Destination.Main.route) { MainScreen() }
             mainScreenGraph()
          }
       }

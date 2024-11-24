@@ -15,6 +15,8 @@ class SpendWiseDataStore(
 ) {
    private val accessToken = stringPreferencesKey("access_token")
    private val theme = stringPreferencesKey("theme_mode")
+   private val userId = stringPreferencesKey("user_id")
+   private val userProfile = stringPreferencesKey("user_profile")
 
    companion object {
       private const val TAG = "SpendWiseDataStore"
@@ -26,7 +28,7 @@ class SpendWiseDataStore(
       }
    }
 
-   suspend fun getAccessToken(): Flow<String?> {
+   fun getAccessToken(): Flow<String?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[accessToken]
       }
@@ -44,7 +46,31 @@ class SpendWiseDataStore(
       }
    }
 
-   suspend fun clearData(): Preferences {
+   suspend fun storeUserId(data: String) {
+      context.spendWiseDataStore.edit { preferences ->
+         preferences[userId] = data
+      }
+   }
+
+   fun getUserId(): Flow<String?> {
+      return context.spendWiseDataStore.data.map { preferences ->
+         preferences[userId]
+      }
+   }
+
+   suspend fun storeUserProfile(data: String) {
+      context.spendWiseDataStore.edit { preferences ->
+         preferences[userProfile] = data
+      }
+   }
+
+   fun getUserProfile(): Flow<String?> {
+      return context.spendWiseDataStore.data.map { preferences ->
+         preferences[userProfile]
+      }
+   }
+
+   suspend fun clearAccessToken(): Preferences {
       return context.spendWiseDataStore.edit { preferences ->
          preferences.remove(accessToken)
       }

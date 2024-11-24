@@ -37,6 +37,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -45,18 +47,24 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gidcode.spendwise.domain.model.User
 import com.gidcode.spendwise.ui.common.PreviewContent
+import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
 import com.gidcode.spendwise.ui.theme.otherGradientColor
 
 @Composable
 fun SettingsScreen(){
-   SettingsScreenContent()
+   val settingsViewModel = ViewModelProvider.settingsViewModel
+   val user by settingsViewModel.user.collectAsState()
+   SettingsScreenContent(
+      user
+   )
 }
 
 @Composable
-fun SettingsScreenContent() {
+fun SettingsScreenContent(user: User) {
    val navController = Navigator.current
    Surface(
       modifier = Modifier
@@ -101,11 +109,11 @@ fun SettingsScreenContent() {
                )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "John Doe",
+            Text(text = user.name,
                style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "johndoe@gmail.com",
+            Text(text = user.email,
                style = MaterialTheme.typography.bodyMedium.copy(
                   color = Color.Gray.copy(alpha = 0.6f)
                )
@@ -140,7 +148,7 @@ fun SettingsScreenContent() {
                         SettingsTile(
                            title = "Notifications",
                            icon = Icons.Default.Notifications,
-                           onClick = { }
+                           onClick = { navController.navigate(Destination.Notifications.route) }
                         )
                      }
                   )
@@ -238,9 +246,7 @@ fun SettingsTile(title: String, icon: ImageVector, onClick: ()->Unit){
 @Composable
 fun SettingsScreenPreview() {
    PreviewContent {
-      SettingsScreenContent(
-
-      )
+      SettingsScreenContent(User("Eric Gordon", "ericgordon@gmail.com"))
    }
 }
 
@@ -248,6 +254,6 @@ fun SettingsScreenPreview() {
 @Composable
 fun SettingsScreenDarkPreview() {
    PreviewContent(darkTheme = true) {
-      SettingsScreenContent()
+      SettingsScreenContent(User("Mo Mo","sendmono@gmail.com"))
    }
 }

@@ -6,4 +6,5 @@ object MyLadderApi {
    const val SIGNUP = "auth/signup"
    const val INCOME = "user/income"
    const val EXPENDITURE = "user/expenditure"
+   const val USER_PROFILE = "user/profile"
 }

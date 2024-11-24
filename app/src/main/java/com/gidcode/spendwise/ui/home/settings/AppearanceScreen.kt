@@ -1,6 +1,5 @@
 package com.gidcode.spendwise.ui.home.settings
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIos
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,7 +61,7 @@ fun AppearanceContent(
                      navController.popBackStack()
                   }
                ) {
-                  Icon(imageVector = Icons.Default.ArrowBackIos, contentDescription = "")
+                  Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBackIos, contentDescription = "")
                }
             }
          )

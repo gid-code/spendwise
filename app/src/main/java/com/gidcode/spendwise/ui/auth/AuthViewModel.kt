@@ -1,34 +1,23 @@
 package com.gidcode.spendwise.ui.auth
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
-import com.gidcode.spendwise.domain.model.AccessTokenDomainModel
 import com.gidcode.spendwise.domain.model.CreateAccountDomainModel
 import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.LoginDomainModel
 import com.gidcode.spendwise.domain.repository.AuthRepository
-import com.gidcode.spendwise.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-   private val repository: AuthRepository,
-   private val dataStore: SpendWiseDataStore
+   private val repository: AuthRepository
 ): ViewModel() {
-
-//   var authToken by mutableStateOf<Resource<AccessTokenDomainModel>>(Resource.Loading)
-//      private set
 
    private val _uiState = MutableStateFlow(UIState())
    val uiState: StateFlow<UIState> = _uiState.asStateFlow()
@@ -73,17 +62,14 @@ class AuthViewModel @Inject constructor(
       viewModelScope.launch {
          _uiState.value = UIState(isLoading = true)
          val result = repository.createUser(data)
-         println("after result")
          result.fold(
             { failure ->
-//               authToken = Resource.Error(failure)
                _uiState.update { currentState ->
                   currentState.copy(isLoading = false, error = failure)
                }
             },
             { data ->
                println(data)
-//               authToken = Resource.Success(data)
                _uiState.update { currentState ->
                   currentState.copy(isLoading = false, hasAuthToken = true)
                }
@@ -93,10 +79,10 @@ class AuthViewModel @Inject constructor(
    }
 
 
-   fun getAccessToken() {
+   private fun getAccessToken() {
 
        viewModelScope.launch {
-          dataStore.getAccessToken().collectLatest { value->
+          repository.getAuthToken().collect { value->
              println("getting token again $value")
              _uiState.value = UIState(hasAuthToken = value != null)
           }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,11 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -49,18 +46,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gidcode.spendwise.R
 import com.gidcode.spendwise.domain.model.CreateAccountDomainModel
-import com.gidcode.spendwise.ui.common.ErrorView
 import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.PreviewContent
 import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
-import com.gidcode.spendwise.util.Resource
 
 @Composable
 fun SignUpScreen() {
    val authViewModel = ViewModelProvider.authToken
-   authViewModel.getAccessToken()
+//   authViewModel.getAccessToken()
    val uiState by authViewModel.uiState.collectAsState()
    val uiEvent: (UIEvents) -> Unit = authViewModel::handleEvent
    SignUpScreenContent(

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,7 +45,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gidcode.spendwise.R
-import com.gidcode.spendwise.domain.model.Exception as Failure
 import com.gidcode.spendwise.domain.model.LoginDomainModel
 import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.PreviewContent
@@ -57,7 +55,7 @@ import com.gidcode.spendwise.ui.navigation.Navigator
 @Composable
 fun LoginScreen() {
    val authViewModel = ViewModelProvider.authToken
-   authViewModel.getAccessToken()
+//   authViewModel.getAccessToken()
    val uiState by authViewModel.uiState.collectAsState()
    val uiEvent: (UIEvents) -> Unit = authViewModel::handleEvent
    LoginScreenContent(
