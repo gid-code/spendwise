@@ -72,7 +72,15 @@ class HomeDataRepository(
    }
 
    override suspend fun clearAccessToken() {
-      localDataSource.clearAccessToken()
+      localDataSource.clearKeyData(localDataSource.accessToken)
+   }
+
+   override suspend fun clearUserId() {
+      localDataSource.clearKeyData(localDataSource.userId)
+   }
+
+   override suspend fun clearUser() {
+      localDataSource.clearKeyData(localDataSource.userProfile)
    }
 
 }

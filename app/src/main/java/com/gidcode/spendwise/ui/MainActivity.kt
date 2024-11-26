@@ -83,7 +83,7 @@ fun SpendWiseApp(){
       Destination.SettingsScreen.route
    )
 
-   val items = mutableListOf(
+   val items = listOf(
       BottomNavItems.HomeItem,
       BottomNavItems.ExpensesItem,
       BottomNavItems.Settings

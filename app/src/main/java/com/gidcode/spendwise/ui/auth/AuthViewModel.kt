@@ -36,20 +36,17 @@ class AuthViewModel @Inject constructor(
 
    private fun loginUser(data: LoginDomainModel){
       viewModelScope.launch {
-//         authToken = Resource.Loading
          _uiState.value = UIState(isLoading = true)
          val result = repository.login(data)
          println("after result")
          result.fold(
             { failure ->
-//               authToken = Resource.Error(failure)
                _uiState.update { currentState ->
                   currentState.copy(isLoading = false, error = failure)
                }
             },
             { data ->
                println(data)
-//               authToken = Resource.Success(data)
                _uiState.update { currentState ->
                   currentState.copy(isLoading = false, hasAuthToken = true)
                }

@@ -80,7 +80,9 @@ dependencies {
    implementation(libs.androidx.datastore.preferences)
 
    // Compose Accompanist
-   implementation ("com.google.accompanist:accompanist-insets:0.12.0")
+   implementation (libs.accompanist.insets)
+
+   implementation (libs.kotlinx.serialization.json)
 
    testImplementation(libs.junit)
    androidTestImplementation(libs.androidx.junit)

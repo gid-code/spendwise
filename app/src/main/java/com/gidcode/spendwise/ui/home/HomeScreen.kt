@@ -46,9 +46,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gidcode.spendwise.R
 import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
 import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
 import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
@@ -118,13 +120,13 @@ fun HomeScreenContent(
                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                Column {
-                  Text(text = "Welcome,",
+                  Text(text = stringResource(R.string.welcome),
                      style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onPrimary
                      )
                   )
                   Spacer(modifier = Modifier.height(2.dp))
-                  Text(text = "John !",
+                  Text(text = "${uiState.user.firstname()} !",
                      style = MaterialTheme.typography.headlineLarge.copy(
                         color = MaterialTheme.colorScheme.onPrimary
                      )
@@ -158,21 +160,7 @@ fun HomeScreenContent(
                }
             }
          }
-//         Column(
-//            modifier = Modifier.fillMaxSize(),
-//            verticalArrangement = Arrangement.Bottom
-//         ) {
-//
-//            if (showError){
-//               uiState.error?.message?.let {
-//                  ErrorViewWithoutButton(text = it, visible = showError) {
-//                     showError = false
-//                  }
-//               }
-//            }
-//
-//            Spacer(modifier = Modifier.fillMaxHeight(0.15f))
-//         }
+
          Box(
             modifier = Modifier
                .align(Alignment.BottomCenter)
@@ -208,7 +196,7 @@ fun RevenueHistory(income: List<IncomeItemDomainModel>, openDialog: () -> Unit) 
          horizontalArrangement = Arrangement.SpaceBetween,
          verticalAlignment = Alignment.CenterVertically
       ) {
-         Text(text = "Revenue History", style = MaterialTheme.typography.titleLarge)
+         Text(text = stringResource(R.string.revenue_history), style = MaterialTheme.typography.titleLarge)
          ElevatedButton(
             onClick = openDialog,
             colors = ButtonColors(
@@ -223,7 +211,7 @@ fun RevenueHistory(income: List<IncomeItemDomainModel>, openDialog: () -> Unit) 
             ) {
                Icon(imageVector = Icons.Filled.Add, contentDescription = "add button")
                Spacer(modifier = Modifier.width(5.dp))
-               Text(text = "Add New", style = MaterialTheme.typography.bodyMedium)
+               Text(text = stringResource(R.string.add_new), style = MaterialTheme.typography.bodyMedium)
             }
          }
       }
@@ -243,7 +231,7 @@ fun RevenueHistory(income: List<IncomeItemDomainModel>, openDialog: () -> Unit) 
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-               text = "No revenue history yet",
+               text = stringResource(R.string.no_revenue_history),
                style = MaterialTheme.typography.titleMedium.copy(
                   color = MaterialTheme.colorScheme.onSurface.copy(
                      alpha = 0.7f
@@ -252,7 +240,7 @@ fun RevenueHistory(income: List<IncomeItemDomainModel>, openDialog: () -> Unit) 
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-               text = "Tap Add New to record your first income",
+               text = stringResource(R.string.add_first_income),
                style = MaterialTheme.typography.bodyMedium.copy(
                   color = MaterialTheme.colorScheme.onSurface.copy(
                      alpha = 0.5f
@@ -287,7 +275,7 @@ fun IncomeExpensesChart(income: Double,expenses: Double) {
          horizontalAlignment = Alignment.Start
       ) {
          Text(
-            text = "Income Vs Expenses",
+            text = stringResource(R.string.income_vs_expenses),
             style = MaterialTheme.typography.titleLarge
          )
          Spacer(modifier = Modifier.height(16.dp))
@@ -341,8 +329,8 @@ fun IncomeExpensesChart(income: Double,expenses: Double) {
                      modifier = Modifier.fillMaxWidth(),
                      horizontalArrangement = Arrangement.SpaceAround
                   ) {
-                     Text(text = "Income")
-                     Text(text = "Expenses")
+                     Text(text = stringResource(R.string.income))
+                     Text(text = stringResource(R.string.expenses))
                   }
 
                }
@@ -370,7 +358,7 @@ fun SummaryCard(balance: String, income: Double, expense: Double, visible : Bool
       Column (
          modifier = Modifier.padding(16.dp)
       ) {
-         Text(text = "Total Balance",
+         Text(text = stringResource(R.string.total_balance),
             style = MaterialTheme.typography.titleSmall.copy(
                color = MaterialTheme.colorScheme.onPrimary
             )
@@ -387,8 +375,8 @@ fun SummaryCard(balance: String, income: Double, expense: Double, visible : Bool
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
          ){
-            MiniSummary(title="Income", amount="GHS ${income.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary)
-            MiniSummary(title="Expenses", amount="GHS ${expense.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+            MiniSummary(title= stringResource(R.string.income), amount="GHS ${income.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary)
+            MiniSummary(title= stringResource(R.string.expenses), amount="GHS ${expense.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
          }
       }
    }

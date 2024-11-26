@@ -15,4 +15,6 @@ interface HomeRepository {
    suspend fun addExpense(token: String, data: AddExpenseDomainModel): Either<Exception,String>
    fun getAccessToken(): Flow<String?>
    suspend fun clearAccessToken()
+   suspend fun clearUserId()
+   suspend fun clearUser()
 }

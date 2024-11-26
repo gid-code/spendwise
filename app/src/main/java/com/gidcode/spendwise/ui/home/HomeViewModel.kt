@@ -10,7 +10,9 @@ import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
 import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
 import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
+import com.gidcode.spendwise.domain.model.User
 import com.gidcode.spendwise.domain.repository.HomeRepository
+import com.gidcode.spendwise.domain.repository.SettingsRepository
 import com.gidcode.spendwise.util.toStringAsFixed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,11 +21,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-   private val repository: HomeRepository
+   private val repository: HomeRepository,
+   private val settingsRepository: SettingsRepository,
 ): ViewModel() {
 
    private val _uiState = MutableStateFlow(UIState())
@@ -58,6 +62,8 @@ class HomeViewModel @Inject constructor(
             fetchAll()
          }
       }
+
+      user()
    }
 
    private fun income(){
@@ -217,9 +223,45 @@ class HomeViewModel @Inject constructor(
    private fun onUnauthorized() {
       viewModelScope.launch {
          repository.clearAccessToken()
-//         delay(200)
-//         println("error to navigate")
-//         _uiState.value = UIState(error = Exception.UnAuthorizedException())
+         repository.clearUserId()
+         repository.clearUser()
+      }
+   }
+
+   private fun user(){
+      viewModelScope.launch {
+         settingsRepository.getUser().collect{value ->
+            if (value == null){
+               getRemoteUser()
+            }else {
+               val json: Json = Json
+               val currentUser = json.decodeFromString<User>(value)
+               _uiState.update { currentState ->
+                  currentState.copy(user = currentUser)
+               }
+            }
+
+         }
+      }
+   }
+
+   private fun getRemoteUser() {
+      viewModelScope.launch {
+         repository.getAccessToken().collect{token->
+            if (token != null){
+               settingsRepository.getUserId().collect{uuid->
+                  if (uuid != null){
+                     val result = settingsRepository.getRemoteUser(uuid,token)
+                     result.getOrNull()?.let { user->
+                        settingsRepository.saveUser(user)
+                        _uiState.update { currentState ->
+                           currentState.copy(user = user)
+                        }
+                     }
+                  }
+               }
+            }
+         }
       }
    }
 
@@ -237,17 +279,13 @@ data class UIState(
    val totalExpense: Double = expenseList.fold(0.0){ sum, item -> sum + item.estimatedAmount},
    val balance: String = (totalIncome - totalExpense).toStringAsFixed(),
    val addIncome: String? = null,
-   val addExpense: String? = null
+   val addExpense: String? = null,
+   val user: User = User("John Doe","johndoe@gmail.com")
 ){
    fun groupExpensesByCategory(): List<Pair<String, List<ExpenseItemDomainModel>>>{
-//      val groupedExpenses = mapOf<String,List<ExpenseItemDomainModel>>()
-//      for (expense in expenses){
-//
-//      }
       return expenseList.groupBy {
          it.category
       }.toList()
-//      return groupedExpenses
    }
 }
 
