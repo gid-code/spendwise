@@ -4,4 +4,14 @@
     <string name="login">Sign in to your account</string>
     <string name="signup">Register</string>
     <string name="try_again">Try again</string>
+    <string name="add_first_income">Tap Add New to record your first income</string>
+    <string name="no_revenue_history">No revenue history yet</string>
+    <string name="add_new">Add New</string>
+    <string name="revenue_history">Revenue History</string>
+    <string name="income_vs_expenses">Income Vs Expenses</string>
+    <string name="income">Income</string>
+    <string name="expenses">Expenses</string>
+    <string name="total_balance">Total Balance</string>
+    <string name="welcome">Welcome,</string>
+    <string name="create_an_account_to_continue">Create an account to continue!</string>
 </resources>

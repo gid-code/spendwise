@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.map
 class SpendWiseDataStore(
    private val context: Context
 ) {
-   private val accessToken = stringPreferencesKey("access_token")
+   val accessToken = stringPreferencesKey("access_token")
    private val theme = stringPreferencesKey("theme_mode")
-   private val userId = stringPreferencesKey("user_id")
-   private val userProfile = stringPreferencesKey("user_profile")
+   val userId = stringPreferencesKey("user_id")
+   val userProfile = stringPreferencesKey("user_profile")
 
    companion object {
       private const val TAG = "SpendWiseDataStore"
@@ -70,9 +70,9 @@ class SpendWiseDataStore(
       }
    }
 
-   suspend fun clearAccessToken(): Preferences {
+   suspend fun clearKeyData(removeKey: Preferences.Key<String>): Preferences {
       return context.spendWiseDataStore.edit { preferences ->
-         preferences.remove(accessToken)
+         preferences.remove(removeKey)
       }
    }
 }

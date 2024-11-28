@@ -10,7 +10,9 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,7 +51,9 @@ class SettingsViewModel @Inject constructor(
             if (value == null){
                getRemoteUser()
             }else {
-               //convert string to :User
+               val json: Json = Json
+               val currentUser = json.decodeFromString<User>(value)
+               _user.value = currentUser
             }
 
          }
@@ -63,13 +67,10 @@ class SettingsViewModel @Inject constructor(
                repository.getUserId().collect{uuid->
                   if (uuid != null){
                      val result = repository.getRemoteUser(uuid,token)
-                     result.fold(
-                        {failure->
-                        },
-                        {data->
-                           _user.value = data
-                        }
-                     )
+                     result.getOrNull()?.let { user->
+                        repository.saveUser(user)
+                        _user.value = user
+                     }
                   }
                }
             }

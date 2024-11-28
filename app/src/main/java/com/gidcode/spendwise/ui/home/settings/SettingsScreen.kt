@@ -26,6 +26,8 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Info
@@ -153,13 +155,18 @@ fun SettingsScreenContent(user: User) {
                      }
                   )
                   SettingsSection(
-                     title = "Security",
-                     icon = Icons.Default.Security,
+                     title = "Privacy and Security",
+                     icon = Icons.Default.Lock,
                      tiles = {
                         SettingsTile(
-                           title = "Privacy and Security",
-                           icon = Icons.Default.Lock,
+                           title = "Privacy Policy",
+                           icon = Icons.Default.PrivacyTip,
                            onClick = { navController.navigate(Destination.Privacy.route) }
+                        )
+                        SettingsTile(
+                           title = "Security",
+                           icon = Icons.Default.Security,
+                           onClick = { navController.navigate(Destination.Security.route) }
                         )
                      }
                   )
@@ -221,12 +228,6 @@ fun SettingsTile(title: String, icon: ImageVector, onClick: ()->Unit){
          .fillMaxWidth()
          .padding(vertical = 8.dp)
          .clickable {
-//            var route = ""
-//            if (title == "Account Information") {
-//               route = Destination.AccountInfo.route
-//            }else if (title == "Appearance") {
-//               route = Destination.Appearance.route
-//            }
             onClick()
          }
       ,

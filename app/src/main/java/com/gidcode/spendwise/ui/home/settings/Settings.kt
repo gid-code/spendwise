@@ -2,6 +2,7 @@ package com.gidcode.spendwise.ui.home.settings
 
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
@@ -22,5 +23,12 @@ fun NavGraphBuilder.settingsGraph(){
       composable(Destination.AccountInfo.route) { AccountInfoScreen() }
       composable(Destination.Appearance.route) { AppearanceScreen() }
       composable(Destination.Notifications.route) { NotificationScreen() }
+      composable(Destination.Privacy.route) { PrivacyScreen() }
+      composable(Destination.Security.route) { SecurityScreen() }
+
    }
+}
+
+@Composable
+fun PrivacyScreen() {
 }

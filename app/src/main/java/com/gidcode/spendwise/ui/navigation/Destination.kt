@@ -15,6 +15,7 @@ sealed class Destination(val route: String) {
    data object AccountInfo: Destination("settings-account-information")
    data object Appearance: Destination("settings-appearance")
    data object Privacy: Destination("settings-privacy")
+   data object Security: Destination("settings-security")
    data object Notifications: Destination("settings-notification")
    data object ConfirmLogout: Destination("confirm-logout")
    data object AddIncome: Destination("add-income")

@@ -2,7 +2,7 @@ plugins {
    alias(libs.plugins.android.application)
    alias(libs.plugins.jetbrains.kotlin.android)
    id("kotlin-kapt")
-   id("com.google.dagger.hilt.android")
+   alias(libs.plugins.dagger.hilt.android)
 }
 
 android {
@@ -83,6 +83,8 @@ dependencies {
    implementation (libs.accompanist.insets)
 
    implementation (libs.kotlinx.serialization.json)
+
+   implementation(libs.androidx.biometric)
 
    testImplementation(libs.junit)
    androidTestImplementation(libs.androidx.junit)

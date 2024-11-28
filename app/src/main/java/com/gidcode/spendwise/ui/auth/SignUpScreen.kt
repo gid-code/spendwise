@@ -122,7 +122,7 @@ fun SignUpScreenContent(
             )
 
             Text(
-               text = "Create an account to continue!",
+               text = stringResource(R.string.create_an_account_to_continue),
                style = MaterialTheme.typography.bodyMedium.copy(
                   fontSize = 12.sp,
                   fontWeight = FontWeight.Medium,
