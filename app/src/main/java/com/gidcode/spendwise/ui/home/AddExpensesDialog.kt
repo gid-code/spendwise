@@ -26,10 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.gidcode.spendwise.R
 import com.gidcode.spendwise.domain.model.AddExpenseDomainModel
 import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
 import com.gidcode.spendwise.ui.common.PreviewContent
@@ -79,7 +81,7 @@ fun AddExpensesContent(
       ) {
          Spacer(modifier = Modifier.height(8.dp))
 
-         Text(text = "Add New Expense",
+         Text(text = stringResource(R.string.add_new_expense_title),
             style = MaterialTheme.typography.titleLarge.copy(
                color = MaterialTheme.colorScheme.onSurface
             )
@@ -89,7 +91,7 @@ fun AddExpensesContent(
          TextField(
             value = name,
             onValueChange = {name = it},
-            label = { Text("Name") },
+            label = { Text(stringResource(R.string.expense_name)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
@@ -100,7 +102,7 @@ fun AddExpensesContent(
          TextField(
             value = category,
             onValueChange = {category = it},
-            label = { Text("Category") },
+            label = { Text(stringResource(R.string.expense_category)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
@@ -111,7 +113,7 @@ fun AddExpensesContent(
          TextField(
             value = amount,
             onValueChange = {amount = it},
-            label = { Text("Estimated Amount") },
+            label = { Text(stringResource(R.string.estimated_amount_label)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
@@ -124,7 +126,7 @@ fun AddExpensesContent(
             horizontalArrangement = Arrangement.SpaceAround
          ) {
             TextButton(onClick = {navController.popBackStack()}) {
-               Text(text = "Cancel",
+               Text(text = stringResource(R.string.cancel_btn_text),
                   style = MaterialTheme.typography.titleMedium
                )
             }
@@ -139,7 +141,7 @@ fun AddExpensesContent(
                   )
                } else {
                   Text(
-                     text = "Submit",
+                     text = stringResource(R.string.submit_btn_text),
                      style = MaterialTheme.typography.titleMedium
                   )
                }

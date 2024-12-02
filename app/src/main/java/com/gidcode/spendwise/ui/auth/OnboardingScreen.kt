@@ -42,6 +42,7 @@ import com.gidcode.spendwise.ui.common.PreviewContent
 import com.gidcode.spendwise.ui.navigation.Destination
 import com.gidcode.spendwise.ui.navigation.Navigator
 import com.gidcode.spendwise.ui.theme.primaryLight
+import com.gidcode.spendwise.util.addFadeAnimation
 
 @Composable
 fun OnboardingScreen() {
@@ -101,7 +102,13 @@ fun OnboardingScreenContent(
                   fontSize = 36.sp,
                   fontWeight = FontWeight.Bold
                ),
-               textAlign = TextAlign.Center
+               textAlign = TextAlign.Center,
+               modifier = Modifier
+                  .addFadeAnimation(
+                     from = 0.2f,
+                     to = 0f,
+                     duration = 2000
+                  )
             )
 
             Box(
@@ -118,14 +125,19 @@ fun OnboardingScreenContent(
                   .height(60.dp)
                   .fillMaxWidth()
                   .clickable {
-                     navController.navigate(Destination.SignUp.route){
+                     navController.navigate(Destination.SignUp.route) {
                         popUpTo(Destination.OnBoarding.route) { inclusive = true }
                      }
                   }
+                  .addFadeAnimation(
+                     from = 0.2f,
+                     to = 0f,
+                     duration = 2000
+                  )
             ){
                Text(
                   modifier = Modifier.align(Alignment.Center),
-                  text = "Get Started",
+                  text = stringResource(R.string.get_started),
                   style = MaterialTheme.typography.bodyMedium.copy(
                      color = Color.White,
                      fontSize = 18.sp,
@@ -137,19 +149,25 @@ fun OnboardingScreenContent(
             Spacer(modifier = Modifier.height(25.dp))
 
             Text(
-               modifier = Modifier.align(Alignment.CenterHorizontally)
+               modifier = Modifier
+                  .align(Alignment.CenterHorizontally)
                   .clickable {
-                     navController.navigate(Destination.Login.route){
+                     navController.navigate(Destination.Login.route) {
                         popUpTo(Destination.OnBoarding.route) { inclusive = true }
                      }
                   }
+                  .addFadeAnimation(
+                     from = 0.2f,
+                     to = 0f,
+                     duration = 2000
+                  )
                ,
                text = buildAnnotatedString {
                   withStyle(style = SpanStyle(color = Color(0xFF444444))){
-                     append("Already have an account? ")
+                     append(stringResource(R.string.already_have_an_account))
                   }
                   withStyle(style = SpanStyle(color = primaryLight)){
-                     append("Log in")
+                     append(stringResource(R.string.log_in))
                   }
                },
                style = MaterialTheme.typography.bodyMedium.copy(

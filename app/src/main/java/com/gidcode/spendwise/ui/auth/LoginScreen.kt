@@ -55,7 +55,6 @@ import com.gidcode.spendwise.ui.navigation.Navigator
 @Composable
 fun LoginScreen() {
    val authViewModel = ViewModelProvider.authToken
-//   authViewModel.getAccessToken()
    val uiState by authViewModel.uiState.collectAsState()
    val uiEvent: (UIEvents) -> Unit = authViewModel::handleEvent
    LoginScreenContent(
@@ -82,7 +81,6 @@ fun LoginScreenContent(
 
    LaunchedEffect(key1 = uiState) {
       if (uiState.hasAuthToken) {
-         println("has token")
          navController.navigate(Destination.Main.route) {
             popUpTo(Destination.Authentication.route) { inclusive = true }
          }
@@ -106,7 +104,7 @@ fun LoginScreenContent(
          ) {
          Spacer(modifier = Modifier.weight(1f))
          Text(
-            text = stringResource(id = R.string.login),
+            text = stringResource(id = R.string.sign_in_to_account),
             style = MaterialTheme.typography.displayMedium.copy(
                fontSize = 36.sp,
                fontWeight = FontWeight.Bold
@@ -115,7 +113,7 @@ fun LoginScreenContent(
          )
 
          Text(
-            text = "Enter your email and password to log in",
+            text = stringResource(R.string.enter_your_email_and_password_to_log_in),
             style = MaterialTheme.typography.bodyMedium.copy(
                fontSize = 12.sp,
                fontWeight = FontWeight.Medium,
@@ -129,7 +127,7 @@ fun LoginScreenContent(
          OutlinedTextField(
             value = email,
             onValueChange = {email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.email)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
@@ -140,13 +138,13 @@ fun LoginScreenContent(
          OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.password)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                val icon = if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                  Icon(imageVector = icon, contentDescription = "Toggle password visibility")
+                  Icon(imageVector = icon, contentDescription = stringResource(R.string.toggle_password_visibility))
                }
             },
             enabled = !uiState.isLoading,
@@ -172,7 +170,8 @@ fun LoginScreenContent(
                   color = MaterialTheme.colorScheme.onPrimary
                )
             } else {
-               Text("Login",
+               Text(
+                  stringResource(R.string.login),
                   style = MaterialTheme.typography.titleMedium.copy(
                      color = MaterialTheme.colorScheme.onPrimary,
                      fontWeight = FontWeight.Bold
@@ -192,10 +191,10 @@ fun LoginScreenContent(
             ,
             text = buildAnnotatedString {
                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurface)){
-                  append("Don't have an account? ")
+                  append(stringResource(R.string.don_t_have_an_account))
                }
                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)){
-                  append("Sign up")
+                  append(stringResource(R.string.sign_up))
                }
             },
             style = MaterialTheme.typography.bodyMedium.copy(

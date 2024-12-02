@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SpendWise</string>
     <string name="onboarding_msg">Spend Smarter Save More</string>
-    <string name="login">Sign in to your account</string>
+    <string name="sign_in_to_account">Sign in to your account</string>
     <string name="signup">Register</string>
     <string name="try_again">Try again</string>
     <string name="add_first_income">Tap Add New to record your first income</string>
@@ -14,4 +14,32 @@
     <string name="total_balance">Total Balance</string>
     <string name="welcome">Welcome,</string>
     <string name="create_an_account_to_continue">Create an account to continue!</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="toggle_password_visibility">Toggle password visibility</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="toggle_confirm_password_visibility">Toggle confirm password visibility</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="already_have_an_account">"Already have an account? "</string>
+    <string name="enter_your_email_and_password_to_log_in">Enter your email and password to log in</string>
+    <string name="don_t_have_an_account">"Don't have an account? "</string>
+    <string name="sign_up">Sign up</string>
+    <string name="log_in">Log in</string>
+    <string name="get_started">Get Started</string>
+    <string name="notification">notification</string>
+    <string name="amount">GHS %1$s</string>
+    <string name="my_expenses_title">My Expenses</string>
+    <string name="no_expenses_found">No expenses found</string>
+    <string name="tap_the_button_to_add_an_expense">Tap the + button to add an expense</string>
+    <string name="add_new_revenue_title">Add New Revenue</string>
+    <string name="revenue_name">Revenue Name</string>
+    <string name="revenue_amount">Amount</string>
+    <string name="cancel_btn_text">Cancel</string>
+    <string name="submit_btn_text">Submit</string>
+    <string name="add_new_expense_title">Add New Expense</string>
+    <string name="expense_name">Name</string>
+    <string name="expense_category">Category</string>
+    <string name="estimated_amount_label">Estimated Amount</string>
 </resources>

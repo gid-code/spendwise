@@ -135,7 +135,7 @@ fun HomeScreenContent(
                IconButton(onClick = { /*TODO*/ }) {
                   Icon(
                      imageVector = Icons.Default.Notifications,
-                     contentDescription = "notification",
+                     contentDescription = stringResource(R.string.notification),
                      tint = MaterialTheme.colorScheme.onPrimary
                   )
                }
@@ -144,8 +144,7 @@ fun HomeScreenContent(
             SummaryCard(
                balance = uiState.balance,
                income = uiState.totalIncome,
-               expense = uiState.totalExpense,
-               visible = true
+               expense = uiState.totalExpense
             )
             Box(modifier = Modifier.fillMaxSize()){
                Column(modifier =
@@ -342,7 +341,7 @@ fun IncomeExpensesChart(income: Double,expenses: Double) {
 }
 
 @Composable
-fun SummaryCard(balance: String, income: Double, expense: Double, visible : Boolean = true) {
+fun SummaryCard(balance: String, income: Double, expense: Double) {
 
    Card (
       colors = CardColors(
@@ -364,7 +363,7 @@ fun SummaryCard(balance: String, income: Double, expense: Double, visible : Bool
             )
          )
          Spacer(modifier = Modifier.height(8.dp))
-         Text(text = "GHS $balance",
+         Text(text = stringResource(R.string.amount, balance),
             style = MaterialTheme.typography.headlineMedium.copy(
                color = MaterialTheme.colorScheme.onPrimary,
                fontWeight = FontWeight.Bold
@@ -375,8 +374,11 @@ fun SummaryCard(balance: String, income: Double, expense: Double, visible : Bool
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
          ){
-            MiniSummary(title= stringResource(R.string.income), amount="GHS ${income.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary)
-            MiniSummary(title= stringResource(R.string.expenses), amount="GHS ${expense.toStringAsFixed()}", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
+            MiniSummary(title= stringResource(R.string.income), amount= stringResource(
+               R.string.amount,
+               income.toStringAsFixed()
+            ), color = MaterialTheme.colorScheme.onPrimary)
+            MiniSummary(title= stringResource(R.string.expenses), amount= stringResource(R.string.amount,expense.toStringAsFixed()), color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f))
          }
       }
    }

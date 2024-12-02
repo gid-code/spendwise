@@ -35,9 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gidcode.spendwise.R
 import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
 import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.PreviewContent
@@ -74,13 +76,6 @@ fun ExpensesScreenContent(uiState: UIState) {
       }
    }
 
-//   Scaffold(
-//      floatingActionButton = {
-//         AddExpensesActionButton(
-//            openDialog = { navController.navigate(Destination.AddExpenses.route) }
-//         )
-//      }
-//   ) {padding->padding
    Surface(
       modifier = Modifier
          .fillMaxSize()
@@ -102,7 +97,7 @@ fun ExpensesScreenContent(uiState: UIState) {
                   )
                )
          ){
-            Text(text = "My Expenses",
+            Text(text = stringResource(R.string.my_expenses_title),
                style = MaterialTheme.typography.displaySmall.copy(
                   color = MaterialTheme.colorScheme.onPrimary
                ),
@@ -130,14 +125,14 @@ fun ExpensesScreenContent(uiState: UIState) {
                   )
                   Spacer(modifier = Modifier.height(16.dp))
                   Text(
-                     text = "No expenses found",
+                     text = stringResource(R.string.no_expenses_found),
                      style = MaterialTheme.typography.titleLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
                      )
                   )
                   Spacer(modifier = Modifier.height(8.dp))
                   Text(
-                     text = "Tap the + button to add an expense",
+                     text = stringResource(R.string.tap_the_button_to_add_an_expense),
                      style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onSurface.copy(0.5f)
                      )
@@ -207,7 +202,8 @@ fun ExpensesItemTitle(expense: ExpenseItemDomainModel) {
          Row(
             verticalAlignment = Alignment.CenterVertically
          ){
-            Box(modifier = Modifier.size(40.dp)
+            Box(modifier = Modifier
+               .size(40.dp)
                .background(color = color.copy(alpha = 0.2f), shape = RoundedCornerShape(8.dp))
             )
             {
@@ -223,18 +219,11 @@ fun ExpensesItemTitle(expense: ExpenseItemDomainModel) {
                style = MaterialTheme.typography.titleMedium
             )
          }
-         Text(text = "GHS ${expense.estimatedAmount.toDouble().toStringAsFixed()}",
+         Text(text = stringResource(R.string.amount,expense.estimatedAmount.toDouble().toStringAsFixed()),
             fontWeight = FontWeight.Bold,
             color = color.copy(alpha = 1f),
          )
       }
-   }
-}
-
-@Composable
-fun AddExpensesActionButton(openDialog: ()-> Unit) {
-   FloatingActionButton(onClick = openDialog) {
-      Icon(imageVector = Icons.Default.Add, contentDescription = "fab icon")
    }
 }
 

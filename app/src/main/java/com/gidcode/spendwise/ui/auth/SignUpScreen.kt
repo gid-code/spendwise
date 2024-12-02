@@ -55,7 +55,6 @@ import com.gidcode.spendwise.ui.navigation.Navigator
 @Composable
 fun SignUpScreen() {
    val authViewModel = ViewModelProvider.authToken
-//   authViewModel.getAccessToken()
    val uiState by authViewModel.uiState.collectAsState()
    val uiEvent: (UIEvents) -> Unit = authViewModel::handleEvent
    SignUpScreenContent(
@@ -136,7 +135,7 @@ fun SignUpScreenContent(
             OutlinedTextField(
                value = name,
                onValueChange = { name = it },
-               label = { Text("Full Name") },
+               label = { Text(stringResource(R.string.full_name)) },
                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                enabled = !uiState.isLoading,
                modifier = Modifier.fillMaxWidth()
@@ -145,7 +144,7 @@ fun SignUpScreenContent(
             OutlinedTextField(
                value = email,
                onValueChange = { email = it },
-               label = { Text("Email") },
+               label = { Text(stringResource(R.string.email)) },
                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                enabled = !uiState.isLoading,
                modifier = Modifier.fillMaxWidth()
@@ -156,14 +155,14 @@ fun SignUpScreenContent(
             OutlinedTextField(
                value = password,
                onValueChange = { password = it },
-               label = { Text("Password") },
+               label = { Text(stringResource(R.string.password)) },
                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                trailingIcon = {
                   val icon =
                      if (passwordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                   IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                     Icon(imageVector = icon, contentDescription = "Toggle password visibility")
+                     Icon(imageVector = icon, contentDescription = stringResource(R.string.toggle_password_visibility))
                   }
                },
                enabled = !uiState.isLoading,
@@ -175,14 +174,14 @@ fun SignUpScreenContent(
             OutlinedTextField(
                value = confirmPassword,
                onValueChange = { confirmPassword = it },
-               label = { Text("Confirm Password") },
+               label = { Text(stringResource(R.string.confirm_password)) },
                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                trailingIcon = {
                   val icon =
                      if (confirmPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                   IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
-                     Icon(imageVector = icon, contentDescription = "Toggle password visibility")
+                     Icon(imageVector = icon, contentDescription = stringResource(R.string.toggle_confirm_password_visibility))
                   }
                },
                enabled = !uiState.isLoading,
@@ -213,7 +212,7 @@ fun SignUpScreenContent(
                   )
                } else {
                   Text(
-                     "Register",
+                     stringResource(R.string.register),
                      style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -232,10 +231,10 @@ fun SignUpScreenContent(
                   },
                text = buildAnnotatedString {
                   withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
-                     append("Already have an account? ")
+                     append(stringResource(R.string.already_have_an_account))
                   }
                   withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                     append("Login")
+                     append(stringResource(R.string.login))
                   }
                },
                style = MaterialTheme.typography.bodyMedium.copy(

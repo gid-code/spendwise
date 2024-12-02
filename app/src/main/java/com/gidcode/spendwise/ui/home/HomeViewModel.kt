@@ -46,11 +46,10 @@ class HomeViewModel @Inject constructor(
 
       // Observe unauthorized state
       viewModelScope.launch {
-         println("observing auth state")
          SharedAuthState.isUnauthorized.collectLatest { isUnauthorized ->
             _isAuthorized = !isUnauthorized
             if (isUnauthorized) {
-               println("calling onUnauth")
+//               println("calling onUnauth")
                onUnauthorized()
             }
          }

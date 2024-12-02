@@ -26,10 +26,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.gidcode.spendwise.R
 import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
 import com.gidcode.spendwise.ui.common.PreviewContent
 import com.gidcode.spendwise.ui.common.ViewModelProvider
@@ -77,7 +79,7 @@ fun AddIncomeContent(
       ) {
          Spacer(modifier = Modifier.height(8.dp))
 
-         Text(text = "Add New Revenue",
+         Text(text = stringResource(R.string.add_new_revenue_title),
             style = MaterialTheme.typography.titleLarge.copy(
                color = MaterialTheme.colorScheme.onSurface
             )
@@ -87,7 +89,7 @@ fun AddIncomeContent(
          TextField(
             value = name,
             onValueChange = {name = it},
-            label = { Text("Revenue Name") },
+            label = { Text(stringResource(R.string.revenue_name)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
@@ -98,7 +100,7 @@ fun AddIncomeContent(
          TextField(
             value = amount,
             onValueChange = {amount = it},
-            label = { Text("Amount") },
+            label = { Text(stringResource(R.string.revenue_amount)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             enabled = !uiState.isLoading,
             modifier = Modifier.fillMaxWidth()
@@ -111,7 +113,7 @@ fun AddIncomeContent(
             horizontalArrangement = Arrangement.SpaceAround
          ) {
             TextButton(onClick = { navController.popBackStack() }) {
-               Text(text = "Cancel",
+               Text(text = stringResource(R.string.cancel_btn_text),
                   style = MaterialTheme.typography.titleMedium
                )
             }
@@ -126,7 +128,7 @@ fun AddIncomeContent(
                   )
                } else {
                   Text(
-                     text = "Submit",
+                     text = stringResource(R.string.submit_btn_text),
                      style = MaterialTheme.typography.titleMedium
                   )
                }
