@@ -159,14 +159,14 @@ fun SettingsScreenContent(user: User) {
                      icon = Icons.Default.Lock,
                      tiles = {
                         SettingsTile(
-                           title = "Privacy Policy",
-                           icon = Icons.Default.PrivacyTip,
-                           onClick = { navController.navigate(Destination.Privacy.route) }
-                        )
-                        SettingsTile(
                            title = "Security",
                            icon = Icons.Default.Security,
                            onClick = { navController.navigate(Destination.Security.route) }
+                        )
+                        SettingsTile(
+                           title = "Privacy Policy",
+                           icon = Icons.Default.PrivacyTip,
+                           onClick = { navController.navigate(Destination.Privacy.route) }
                         )
                      }
                   )

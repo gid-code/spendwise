@@ -43,4 +43,12 @@ class SettingsDataRepository(
    override fun getUserId(): Flow<String?> {
       return localDataSource.getUserId()
    }
+
+   override fun getBiometricEnabled(): Flow<Boolean> {
+      return localDataSource.getEnableBiometric()
+   }
+
+   override suspend fun toggleBiometric() {
+      localDataSource.toggleBiometric()
+   }
 }

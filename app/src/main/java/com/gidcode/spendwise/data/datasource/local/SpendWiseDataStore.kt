@@ -3,6 +3,7 @@ package com.gidcode.spendwise.data.datasource.local
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -17,6 +18,7 @@ class SpendWiseDataStore(
    private val theme = stringPreferencesKey("theme_mode")
    val userId = stringPreferencesKey("user_id")
    val userProfile = stringPreferencesKey("user_profile")
+   val enableBiometric = booleanPreferencesKey("enable_biometric")
 
    companion object {
       private const val TAG = "SpendWiseDataStore"
@@ -67,6 +69,18 @@ class SpendWiseDataStore(
    fun getUserProfile(): Flow<String?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[userProfile]
+      }
+   }
+
+   suspend fun toggleBiometric() {
+      context.spendWiseDataStore.edit { preferences ->
+         preferences[enableBiometric] = !(preferences[enableBiometric] ?: false)
+      }
+   }
+
+   fun getEnableBiometric(): Flow<Boolean> {
+      return context.spendWiseDataStore.data.map { preferences ->
+         preferences[enableBiometric] ?: false
       }
    }
 

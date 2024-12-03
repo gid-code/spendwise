@@ -21,28 +21,33 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gidcode.spendwise.ui.common.PreviewContent
+import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.navigation.Navigator
 
 @Composable
 fun SecurityScreen(){
-   SecurityScreenContent()
+   val settingsViewModel = ViewModelProvider.settingsViewModel
+   val isBiometricEnabled by settingsViewModel.isBiometricEnabled.collectAsState()
+   SecurityScreenContent(
+      isBiometricEnabled
+   ){
+      settingsViewModel.toggleBiometric()
+   }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SecurityScreenContent(){
+fun SecurityScreenContent(isBiometricEnabled: Boolean, toggleBiometric: () -> Unit) {
    val navController = Navigator.current
-   var checked: Boolean by remember { mutableStateOf(false) }
+//   var checked: Boolean by remember { mutableStateOf(isBiometricEnabled) }
    Scaffold(
       topBar = {
          TopAppBar(
@@ -76,13 +81,11 @@ fun SecurityScreenContent(){
             icon = Icons.Outlined.Fingerprint,
             trailing = {
                Switch(
-                  checked = checked,
-                  onCheckedChange = {
-                     checked = it
-                  }
+                  checked = isBiometricEnabled,
+                  onCheckedChange = { toggleBiometric() }
                )
             }
-         ) { }
+         ) { toggleBiometric() }
       }
    }
 }
@@ -113,7 +116,9 @@ fun ItemTile(title: String, icon: ImageVector, trailing: @Composable (() -> Unit
 @Composable
 fun SecurityScreenPreview() {
    PreviewContent {
-      SecurityScreenContent()
+      SecurityScreenContent(false) {
+
+      }
    }
 }
 
@@ -121,6 +126,8 @@ fun SecurityScreenPreview() {
 @Composable
 fun SecurityScreenDarkPreview() {
    PreviewContent(darkTheme = true) {
-      SecurityScreenContent()
+      SecurityScreenContent(true) {
+
+      }
    }
 }

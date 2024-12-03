@@ -22,8 +22,10 @@ class SettingsViewModel @Inject constructor(
 ): ViewModel() {
    private val _themeMode =  MutableStateFlow(ThemeMode.SYSTEM)
    private val _user = MutableStateFlow(User("John Doe","johndoe@gmail.com"))
+   private val _isBiometricEnabled = MutableStateFlow(false)
    val themeMode: StateFlow<ThemeMode> = _themeMode
    val user: StateFlow<User> = _user
+   val isBiometricEnabled: StateFlow<Boolean> = _isBiometricEnabled
 
    init {
       viewModelScope.launch {
@@ -36,12 +38,24 @@ class SettingsViewModel @Inject constructor(
          }
       }
 
+      viewModelScope.launch {
+         repository.getBiometricEnabled().collect { value ->
+            _isBiometricEnabled.value = value
+         }
+      }
+
       user()
    }
 
    fun setThemeMode(mode: ThemeMode){
       viewModelScope.launch {
          repository.saveThemeMode(mode)
+      }
+   }
+
+   fun toggleBiometric(){
+      viewModelScope.launch {
+         repository.toggleBiometric()
       }
    }
 

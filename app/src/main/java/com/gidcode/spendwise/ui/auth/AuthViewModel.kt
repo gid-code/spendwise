@@ -6,6 +6,7 @@ import com.gidcode.spendwise.domain.model.CreateAccountDomainModel
 import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.LoginDomainModel
 import com.gidcode.spendwise.domain.repository.AuthRepository
+import com.gidcode.spendwise.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-   private val repository: AuthRepository
+   private val repository: AuthRepository,
+   private val settingsRepository: SettingsRepository
 ): ViewModel() {
 
    private val _uiState = MutableStateFlow(UIState())
@@ -31,6 +33,12 @@ class AuthViewModel @Inject constructor(
 
    init {
       getAccessToken()
+
+      viewModelScope.launch {
+         settingsRepository.getBiometricEnabled().collect { value->
+            _uiState.value = UIState(isBiometricEnabled = value)
+         }
+      }
    }
 
 
@@ -90,7 +98,8 @@ class AuthViewModel @Inject constructor(
 data class UIState(
    val isLoading: Boolean = false,
    val hasAuthToken: Boolean = false,
-   val error: Exception? = null
+   val error: Exception? = null,
+   val isBiometricEnabled: Boolean = false
 )
 
 sealed class UIEvents {

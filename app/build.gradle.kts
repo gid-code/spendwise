@@ -53,6 +53,7 @@ android {
 
 dependencies {
 
+   implementation(libs.androidx.appcompat)
    implementation(libs.androidx.core.ktx)
    implementation(libs.androidx.lifecycle.runtime.ktx)
    implementation(libs.androidx.activity.compose)
@@ -85,6 +86,7 @@ dependencies {
    implementation (libs.kotlinx.serialization.json)
 
    implementation(libs.androidx.biometric)
+   implementation(libs.androidx.biometric.ktx)
 
    testImplementation(libs.junit)
    androidTestImplementation(libs.androidx.junit)
