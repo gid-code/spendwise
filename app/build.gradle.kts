@@ -86,7 +86,6 @@ dependencies {
    implementation (libs.kotlinx.serialization.json)
 
    implementation(libs.androidx.biometric)
-   implementation(libs.androidx.biometric.ktx)
 
    testImplementation(libs.junit)
    androidTestImplementation(libs.androidx.junit)

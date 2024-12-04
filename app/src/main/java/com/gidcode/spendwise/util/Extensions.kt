@@ -1,5 +1,8 @@
 package com.gidcode.spendwise.util
 
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -90,4 +93,15 @@ fun Modifier.addFadeAnimation(from: Float, to: Float, duration: Int): Modifier =
       contentAlpha = to
    }
    this.alpha(animatedContentAlpha)
+}
+
+fun Context.getActivity(): AppCompatActivity? {
+   var currentContext = this
+   while (currentContext is ContextWrapper) {
+      if (currentContext is AppCompatActivity) {
+         return currentContext
+      }
+      currentContext = currentContext.baseContext
+   }
+   return null
 }
