@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
 import com.gidcode.spendwise.data.network.SharedAuthState
+import com.gidcode.spendwise.di.usecasefactory.UserUseCaseFactory
 import com.gidcode.spendwise.domain.model.AddExpenseDomainModel
 import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
 import com.gidcode.spendwise.domain.model.Exception
@@ -27,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
    private val repository: HomeRepository,
-   private val settingsRepository: SettingsRepository,
+   private val userUseCaseFactory: UserUseCaseFactory
 ): ViewModel() {
 
    private val _uiState = MutableStateFlow(UIState())
@@ -229,7 +230,7 @@ class HomeViewModel @Inject constructor(
 
    private fun user(){
       viewModelScope.launch {
-         settingsRepository.getUser().collect{value ->
+         userUseCaseFactory.getUserUseCase.invoke().collect{value ->
             if (value == null){
                getRemoteUser()
             }else {
@@ -248,11 +249,11 @@ class HomeViewModel @Inject constructor(
       viewModelScope.launch {
          repository.getAccessToken().collect{token->
             if (token != null){
-               settingsRepository.getUserId().collect{uuid->
+               userUseCaseFactory.getUserIdUseCase.invoke().collect{uuid->
                   if (uuid != null){
-                     val result = settingsRepository.getRemoteUser(uuid,token)
+                     val result = userUseCaseFactory.getRemoteUserUseCase.invoke(uuid,token)
                      result.getOrNull()?.let { user->
-                        settingsRepository.saveUser(user)
+                        userUseCaseFactory.storeUserUseCase.invoke(user)
                         _uiState.update { currentState ->
                            currentState.copy(user = user)
                         }
