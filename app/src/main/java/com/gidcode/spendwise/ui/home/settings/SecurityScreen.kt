@@ -72,10 +72,10 @@ fun SecurityScreenContent(isBiometricEnabled: Boolean, toggleBiometric: () -> Un
             .padding(vertical = contentPadding.calculateTopPadding(), horizontal = 16.dp),
          horizontalAlignment = Alignment.CenterHorizontally
       ){
-         ItemTile(
-            title = "Enable Pin",
-            icon = Icons.Outlined.Lock
-         ) { }
+//         ItemTile(
+//            title = "Enable Pin",
+//            icon = Icons.Outlined.Lock
+//         ) { }
          ItemTile(
             title = "Enable Biometric",
             icon = Icons.Outlined.Fingerprint,

@@ -105,8 +105,8 @@ fun OnboardingScreenContent(
                textAlign = TextAlign.Center,
                modifier = Modifier
                   .addFadeAnimation(
-                     from = 0.2f,
-                     to = 0f,
+                     from = 0.4f,
+                     to = 1f,
                      duration = 2000
                   )
             )
@@ -130,8 +130,8 @@ fun OnboardingScreenContent(
                      }
                   }
                   .addFadeAnimation(
-                     from = 0.2f,
-                     to = 0f,
+                     from = 0.4f,
+                     to = 1f,
                      duration = 2000
                   )
             ){
@@ -157,8 +157,8 @@ fun OnboardingScreenContent(
                      }
                   }
                   .addFadeAnimation(
-                     from = 0.2f,
-                     to = 0f,
+                     from = 0.4f,
+                     to = 1f,
                      duration = 2000
                   )
                ,

@@ -37,7 +37,7 @@ class AuthViewModel @Inject constructor(
 
       viewModelScope.launch {
          userUseCaseFactory.getBiometricEnabledUseCase.invoke().collect { value->
-            _uiState.value = UIState(isBiometricEnabled = value)
+            _uiState.update { currentState -> currentState.copy(isBiometricEnabled = value) }
          }
       }
    }
@@ -47,7 +47,6 @@ class AuthViewModel @Inject constructor(
       viewModelScope.launch {
          _uiState.value = UIState(isLoading = true)
          val result = repository.login(data)
-         println("after result")
          result.fold(
             { failure ->
                _uiState.update { currentState ->
@@ -89,8 +88,7 @@ class AuthViewModel @Inject constructor(
 
        viewModelScope.launch {
           repository.getAuthToken().collect { value->
-             println("getting token again $value")
-             _uiState.value = UIState(hasAuthToken = value != null)
+             _uiState.update { currentState -> currentState.copy(hasAuthToken = value != null) }
           }
        }
    }

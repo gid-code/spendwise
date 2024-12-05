@@ -1,12 +1,10 @@
 package com.gidcode.spendwise.ui
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -30,13 +28,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.dialog
 import com.gidcode.spendwise.ui.auth.authGraph
 import com.gidcode.spendwise.ui.common.ProvideMultiViewModel
 import com.gidcode.spendwise.ui.common.ViewModelProvider
-import com.gidcode.spendwise.ui.home.AddExpensesDialog
-import com.gidcode.spendwise.ui.home.AddIncomeDialog
-import com.gidcode.spendwise.ui.home.MainScreen
 import com.gidcode.spendwise.ui.home.mainScreenGraph
 import com.gidcode.spendwise.ui.navigation.BottomNavItems
 import com.gidcode.spendwise.ui.navigation.Destination

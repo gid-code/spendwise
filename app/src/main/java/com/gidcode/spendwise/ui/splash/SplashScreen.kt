@@ -33,7 +33,6 @@ import com.gidcode.spendwise.ui.common.ErrorViewWithoutButton
 import com.gidcode.spendwise.ui.common.PreviewContent
 import com.gidcode.spendwise.ui.common.ViewModelProvider
 import com.gidcode.spendwise.ui.navigation.*
-import com.gidcode.spendwise.util.getActivity
 import kotlinx.coroutines.delay
 
 @Composable
@@ -53,7 +52,7 @@ fun SplashScreen(){
       navigateToAuth = true
    }
 
-   LaunchedEffect(key1 = uiState.hasAuthToken, key2 = navigateToAuth, key3 = uiState.isBiometricEnabled) {
+   LaunchedEffect(key1 = uiState, key2 = navigateToAuth) {
       if (navigateToAuth) {
          if (uiState.hasAuthToken){
             if (uiState.isBiometricEnabled){
@@ -75,77 +74,82 @@ fun SplashScreen(){
 
    }
 
-   SplashScreenContent(visible = true)
+   SplashScreenContent(visible = true, promptManager)
 
 }
 
 @Composable
 fun SplashScreenContent(
-   visible : Boolean
-){
-   val context = LocalContext.current
+   visible: Boolean,
+   promptManager: BiometricPromptManager?
+) {
    val navController = Navigator.current
-   val promptManager by lazy {
-      BiometricPromptManager(context as AppCompatActivity)
-   }
    var showError by remember { mutableStateOf(false) }
    var errorMsg by remember { mutableStateOf("") }
 
-   val promptResult by promptManager.promptResults.collectAsState(initial = null)
+   promptManager?.let { manager ->
 
-   val enrollLauncher = rememberLauncherForActivityResult(
-      contract = ActivityResultContracts.StartActivityForResult(),
-      onResult = {
-         println("Activity result: $it")
-      }
-   )
+      val promptResult by manager.promptResults.collectAsState(initial = null)
 
-   LaunchedEffect(promptResult) {
-      if (promptResult is BiometricPromptManager.BiometricResult.AuthenticationNotSet){
-         if (Build.VERSION.SDK_INT >= 30 ){
-            val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
-               putExtra(
-                  Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
-                  BIOMETRIC_STRONG or DEVICE_CREDENTIAL
-               )
-            }
-
-            enrollLauncher.launch(enrollIntent)
+      val enrollLauncher = rememberLauncherForActivityResult(
+         contract = ActivityResultContracts.StartActivityForResult(),
+         onResult = {
+            println("Activity result: $it")
          }
-      }
+      )
 
-      when (promptResult) {
-         is BiometricPromptManager.BiometricResult.AuthenticationSuccess -> {
-            navController.navigate(Destination.Main.route) {
-               popUpTo(Destination.Splash.route) { inclusive = true }
+      LaunchedEffect(promptResult) {
+         if (promptResult is BiometricPromptManager.BiometricResult.AuthenticationNotSet) {
+            if (Build.VERSION.SDK_INT >= 30) {
+               val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
+                  putExtra(
+                     Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
+                     BIOMETRIC_STRONG or DEVICE_CREDENTIAL
+                  )
+               }
+
+               enrollLauncher.launch(enrollIntent)
             }
          }
-         is BiometricPromptManager.BiometricResult.AuthenticationNotSet -> {
-            showError = true
-            errorMsg = "Authentication not set"
-         }
-         is BiometricPromptManager.BiometricResult.AuthenticationFailed -> {
-            showError = true
-            errorMsg = "Authentication failed"
-         }
-         is BiometricPromptManager.BiometricResult.AuthenticationError -> {
-            showError = true
-            errorMsg = (promptResult as BiometricPromptManager.BiometricResult.AuthenticationError).error
-         }
-         is BiometricPromptManager.BiometricResult.FeatureUnavailable -> {
-            showError = true
-            errorMsg = "Feature unavailable"
-         }
-         is BiometricPromptManager.BiometricResult.HardwareUnavailable -> {
-            showError = true
-            errorMsg = "Feature unavailable"
-         }
-         else -> {
-            showError = true
-            errorMsg = "Unknown error"
+
+         when (promptResult) {
+            is BiometricPromptManager.BiometricResult.AuthenticationSuccess -> {
+               navController.navigate(Destination.Main.route) {
+                  popUpTo(Destination.Splash.route) { inclusive = true }
+               }
+            }
+
+            is BiometricPromptManager.BiometricResult.AuthenticationNotSet -> {
+               showError = true
+               errorMsg = "Authentication not set"
+            }
+
+            is BiometricPromptManager.BiometricResult.AuthenticationFailed -> {
+               showError = true
+               errorMsg = "Authentication failed"
+            }
+
+            is BiometricPromptManager.BiometricResult.AuthenticationError -> {
+               showError = true
+               errorMsg =
+                  (promptResult as BiometricPromptManager.BiometricResult.AuthenticationError).error
+            }
+
+            is BiometricPromptManager.BiometricResult.FeatureUnavailable -> {
+               showError = true
+               errorMsg = "Feature unavailable"
+            }
+
+            is BiometricPromptManager.BiometricResult.HardwareUnavailable -> {
+               showError = true
+               errorMsg = "Feature unavailable"
+            }
+
+            null -> {}
          }
       }
    }
+
    Box {
       Column(
          horizontalAlignment = Alignment.CenterHorizontally,
@@ -180,7 +184,7 @@ fun SplashScreenContent(
 @Composable
 fun SplashScreenPreview() {
    PreviewContent {
-      SplashScreenContent(visible = true)
+      SplashScreenContent(visible = true, promptManager = null)
    }
 }
 
@@ -188,6 +192,6 @@ fun SplashScreenPreview() {
 @Composable
 fun SplashScreenDarkPreview() {
    PreviewContent(darkTheme = true) {
-      SplashScreenContent(visible = true)
+      SplashScreenContent(visible = true, promptManager = null)
    }
 }
