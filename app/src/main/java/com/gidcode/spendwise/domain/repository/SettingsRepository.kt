@@ -13,6 +13,8 @@ interface SettingsRepository {
    suspend fun saveUser(user: User)
    fun getUser(): Flow<String?>
    fun getUserId(): Flow<String?>
+   suspend fun clearUserId()
+   suspend fun clearUser()
    fun getBiometricEnabled(): Flow<Boolean>
    suspend fun toggleBiometric()
 }

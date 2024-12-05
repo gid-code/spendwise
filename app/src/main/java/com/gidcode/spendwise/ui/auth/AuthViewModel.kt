@@ -2,6 +2,7 @@ package com.gidcode.spendwise.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gidcode.spendwise.di.usecasefactory.UserUseCaseFactory
 import com.gidcode.spendwise.domain.model.CreateAccountDomainModel
 import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.LoginDomainModel
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
    private val repository: AuthRepository,
-   private val settingsRepository: SettingsRepository
+   private val userUseCaseFactory: UserUseCaseFactory
 ): ViewModel() {
 
    private val _uiState = MutableStateFlow(UIState())
@@ -35,7 +36,7 @@ class AuthViewModel @Inject constructor(
       getAccessToken()
 
       viewModelScope.launch {
-         settingsRepository.getBiometricEnabled().collect { value->
+         userUseCaseFactory.getBiometricEnabledUseCase.invoke().collect { value->
             _uiState.value = UIState(isBiometricEnabled = value)
          }
       }

@@ -2,6 +2,7 @@ package com.gidcode.spendwise.ui.home.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gidcode.spendwise.di.usecasefactory.AuthUseCaseFactory
 import com.gidcode.spendwise.di.usecasefactory.UserUseCaseFactory
 import com.gidcode.spendwise.domain.model.User
 import com.gidcode.spendwise.domain.repository.AuthRepository
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
    private val repository: SettingsRepository,
-   private val authRepository: AuthRepository,
+   private val authUseCaseFactory: AuthUseCaseFactory,
    private val userUseCaseFactory: UserUseCaseFactory
 ): ViewModel() {
    private val _themeMode =  MutableStateFlow(ThemeMode.SYSTEM)
@@ -78,7 +79,7 @@ class SettingsViewModel @Inject constructor(
 
    private fun getRemoteUser() {
       viewModelScope.launch {
-         authRepository.getAuthToken().collect{token->
+         authUseCaseFactory.getAccessTokenUseCase.invoke().collect{token->
             if (token != null){
                userUseCaseFactory.getUserIdUseCase.invoke().collect{uuid->
                   if (uuid != null){

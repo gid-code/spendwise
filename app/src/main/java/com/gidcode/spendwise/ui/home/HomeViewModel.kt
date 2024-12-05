@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
 import com.gidcode.spendwise.data.network.SharedAuthState
+import com.gidcode.spendwise.di.usecasefactory.AuthUseCaseFactory
 import com.gidcode.spendwise.di.usecasefactory.UserUseCaseFactory
 import com.gidcode.spendwise.domain.model.AddExpenseDomainModel
 import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
@@ -28,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
    private val repository: HomeRepository,
-   private val userUseCaseFactory: UserUseCaseFactory
+   private val userUseCaseFactory: UserUseCaseFactory,
+   private val authUseCaseFactory: AuthUseCaseFactory
 ): ViewModel() {
 
    private val _uiState = MutableStateFlow(UIState())
@@ -57,7 +59,7 @@ class HomeViewModel @Inject constructor(
       }
 
       viewModelScope.launch {
-         repository.getAccessToken().collectLatest { value->
+         authUseCaseFactory.getAccessTokenUseCase.invoke().collectLatest { value->
             _token = value
             fetchAll()
          }
@@ -222,9 +224,9 @@ class HomeViewModel @Inject constructor(
 
    private fun onUnauthorized() {
       viewModelScope.launch {
-         repository.clearAccessToken()
-         repository.clearUserId()
-         repository.clearUser()
+         authUseCaseFactory.clearAccessTokenUseCase.invoke()
+         userUseCaseFactory.clearUseCase.invoke()
+         userUseCaseFactory.clearUserIdUseCase.invoke()
       }
    }
 
@@ -247,7 +249,7 @@ class HomeViewModel @Inject constructor(
 
    private fun getRemoteUser() {
       viewModelScope.launch {
-         repository.getAccessToken().collect{token->
+         authUseCaseFactory.getAccessTokenUseCase.invoke().collect{token->
             if (token != null){
                userUseCaseFactory.getUserIdUseCase.invoke().collect{uuid->
                   if (uuid != null){

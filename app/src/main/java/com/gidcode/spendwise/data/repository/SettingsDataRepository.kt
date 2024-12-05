@@ -51,4 +51,12 @@ class SettingsDataRepository(
    override suspend fun toggleBiometric() {
       localDataSource.toggleBiometric()
    }
+
+   override suspend fun clearUserId() {
+      localDataSource.clearKeyData(localDataSource.userId)
+   }
+
+   override suspend fun clearUser() {
+      localDataSource.clearKeyData(localDataSource.userProfile)
+   }
 }

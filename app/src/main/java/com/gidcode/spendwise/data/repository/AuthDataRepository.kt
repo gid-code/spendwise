@@ -41,4 +41,8 @@ class AuthDataRepository(
       return localDataSource.getAccessToken()
    }
 
+   override suspend fun clearAccessToken() {
+      localDataSource.clearKeyData(localDataSource.accessToken)
+   }
+
 }

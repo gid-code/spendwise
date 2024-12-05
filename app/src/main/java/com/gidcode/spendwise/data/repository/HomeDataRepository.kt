@@ -67,20 +67,4 @@ class HomeDataRepository(
       }
    }
 
-   override fun getAccessToken(): Flow<String?> {
-      return localDataSource.getAccessToken()
-   }
-
-   override suspend fun clearAccessToken() {
-      localDataSource.clearKeyData(localDataSource.accessToken)
-   }
-
-   override suspend fun clearUserId() {
-      localDataSource.clearKeyData(localDataSource.userId)
-   }
-
-   override suspend fun clearUser() {
-      localDataSource.clearKeyData(localDataSource.userProfile)
-   }
-
 }

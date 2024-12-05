@@ -10,6 +10,7 @@ import com.gidcode.spendwise.data.network.service.SpendWiseService
 import com.gidcode.spendwise.data.repository.AuthDataRepository
 import com.gidcode.spendwise.data.repository.HomeDataRepository
 import com.gidcode.spendwise.data.repository.SettingsDataRepository
+import com.gidcode.spendwise.di.usecasefactory.AuthUseCaseFactory
 import com.gidcode.spendwise.di.usecasefactory.UserUseCaseFactory
 import com.gidcode.spendwise.domain.repository.AuthRepository
 import com.gidcode.spendwise.domain.repository.HomeRepository
@@ -86,5 +87,10 @@ object AppModule {
    fun providesUserUseCaseFactory(
       repository: SettingsRepository
    ): UserUseCaseFactory = UserUseCaseFactory(repository)
+
+   @Provides
+   fun providesAuthUseCaseFactory(
+      repository: AuthRepository
+   ): AuthUseCaseFactory = AuthUseCaseFactory(repository)
 
 }
