@@ -184,7 +184,7 @@ fun SettingsScreenContent(user: User) {
                   Spacer(modifier = Modifier.height(20.dp))
                   ElevatedButton(
                      onClick = {
-                        //open confirmation dialog
+                        navController.navigate(Destination.ConfirmLogout.route)
                      },
                      colors = ButtonColors(
                         contentColor = Color.White,

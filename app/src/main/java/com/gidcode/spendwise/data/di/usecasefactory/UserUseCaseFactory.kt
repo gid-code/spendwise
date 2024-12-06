@@ -1,4 +1,4 @@
-package com.gidcode.spendwise.di.usecasefactory
+package com.gidcode.spendwise.data.di.usecasefactory
 
 import com.gidcode.spendwise.domain.repository.SettingsRepository
 import com.gidcode.spendwise.domain.usecase.ClearUserIdUseCase
@@ -17,7 +17,7 @@ class UserUseCaseFactory @Inject constructor(
    val getUserIdUseCase = GetUserIdUseCase(repository)
    val getRemoteUserUseCase = GetRemoteUserUseCase(repository)
    val storeUserUseCase = StoreUserUseCase(repository)
-   val clearUseCase = ClearUserUseCase(repository)
+   val clearUserUseCase = ClearUserUseCase(repository)
    val clearUserIdUseCase = ClearUserIdUseCase(repository)
    val getBiometricEnabledUseCase = GetBiometricEnabledUseCase(repository)
 }

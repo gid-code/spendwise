@@ -23,9 +23,9 @@ class SettingsDataRepository(
       return localDataSource.getThemeMode()
    }
 
-   override suspend fun getRemoteUser(uuid: String, token: String): Either<Failure,User> {
+   override suspend fun getRemoteUser(uuid: String): Either<Failure,User> {
       return try {
-         val result = remoteDataSource.user(uuid, token)
+         val result = remoteDataSource.user(uuid)
          right(result.toDomain())
       }catch (e: Exception){
          left(Failure.General(e.localizedMessage))

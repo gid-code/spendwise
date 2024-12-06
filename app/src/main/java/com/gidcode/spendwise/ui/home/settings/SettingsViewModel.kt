@@ -2,8 +2,8 @@ package com.gidcode.spendwise.ui.home.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gidcode.spendwise.di.usecasefactory.AuthUseCaseFactory
-import com.gidcode.spendwise.di.usecasefactory.UserUseCaseFactory
+import com.gidcode.spendwise.data.di.usecasefactory.AuthUseCaseFactory
+import com.gidcode.spendwise.data.di.usecasefactory.UserUseCaseFactory
 import com.gidcode.spendwise.domain.model.User
 import com.gidcode.spendwise.domain.repository.AuthRepository
 import com.gidcode.spendwise.domain.repository.SettingsRepository
@@ -83,7 +83,7 @@ class SettingsViewModel @Inject constructor(
             if (token != null){
                userUseCaseFactory.getUserIdUseCase.invoke().collect{uuid->
                   if (uuid != null){
-                     val result = userUseCaseFactory.getRemoteUserUseCase.invoke(uuid,token)
+                     val result = userUseCaseFactory.getRemoteUserUseCase.invoke(uuid)
                      result.getOrNull()?.let { user->
                         userUseCaseFactory.storeUserUseCase.invoke(user)
                         _user.value = user
@@ -92,6 +92,12 @@ class SettingsViewModel @Inject constructor(
                }
             }
          }
+      }
+   }
+
+   fun logout() {
+      viewModelScope.launch {
+         authUseCaseFactory.logoutUseCase.invoke()
       }
    }
 }

@@ -42,4 +42,7 @@
     <string name="expense_name">Name</string>
     <string name="expense_category">Category</string>
     <string name="estimated_amount_label">Estimated Amount</string>
+    <string name="logout_btn_text">Logout</string>
+    <string name="confirm_logout_title">Confirm Logout</string>
+    <string name="confirm_logout_text">Are you sure you want to logout?</string>
 </resources>

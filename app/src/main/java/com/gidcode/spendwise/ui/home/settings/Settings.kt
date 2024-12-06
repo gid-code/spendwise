@@ -5,6 +5,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import com.gidcode.spendwise.ui.navigation.Destination
 
@@ -25,7 +26,7 @@ fun NavGraphBuilder.settingsGraph(){
       composable(Destination.Notifications.route) { NotificationScreen() }
       composable(Destination.Privacy.route) { PrivacyScreen() }
       composable(Destination.Security.route) { SecurityScreen() }
-
+      dialog(Destination.ConfirmLogout.route) { ConfirmLogoutDialog() }
    }
 }
 
