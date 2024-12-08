@@ -82,7 +82,7 @@ fun HomeScreenContent(
 
    LaunchedEffect(key1 = uiState) {
       if (!uiState.isAuthorized) {
-         navController.navigate(Destination.OnBoarding.route) {
+         navController.navigate(Destination.Login.route) {
             popUpTo(Destination.Main.route) { inclusive = true }
          }
       }else if (uiState.error != null){

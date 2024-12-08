@@ -8,8 +8,8 @@ import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
 import com.gidcode.spendwise.util.Either
 
 interface HomeRepository {
-   suspend fun incomes(token: String): Either<Exception, List<IncomeItemDomainModel>>
-   suspend fun expenses(token: String): Either<Exception, List<ExpenseItemDomainModel>>
-   suspend fun addIncome(token: String, data: AddIncomeDomainModel): Either<Exception,String>
-   suspend fun addExpense(token: String, data: AddExpenseDomainModel): Either<Exception,String>
+   suspend fun incomes(): Either<Exception, List<IncomeItemDomainModel>>
+   suspend fun expenses(): Either<Exception, List<ExpenseItemDomainModel>>
+   suspend fun addIncome(data: AddIncomeDomainModel): Either<Exception,String>
+   suspend fun addExpense(data: AddExpenseDomainModel): Either<Exception,String>
 }

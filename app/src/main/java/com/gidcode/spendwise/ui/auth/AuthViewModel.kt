@@ -2,7 +2,7 @@ package com.gidcode.spendwise.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gidcode.spendwise.di.usecasefactory.UserUseCaseFactory
+import com.gidcode.spendwise.data.di.usecasefactory.UserUseCaseFactory
 import com.gidcode.spendwise.domain.model.CreateAccountDomainModel
 import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.LoginDomainModel

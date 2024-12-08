@@ -1,17 +1,18 @@
-package com.gidcode.spendwise.di
+package com.gidcode.spendwise.data.di
 
 import android.content.Context
 import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
 import com.gidcode.spendwise.data.datasource.remote.AuthRemoteDataSource
 import com.gidcode.spendwise.data.datasource.remote.HomeRemoteDataSource
-import com.gidcode.spendwise.data.network.AuthInterceptor
+import com.gidcode.spendwise.data.network.interceptor.AuthInterceptor
 import com.gidcode.spendwise.data.network.client.MyLadderApiClient
 import com.gidcode.spendwise.data.network.service.SpendWiseService
 import com.gidcode.spendwise.data.repository.AuthDataRepository
 import com.gidcode.spendwise.data.repository.HomeDataRepository
 import com.gidcode.spendwise.data.repository.SettingsDataRepository
-import com.gidcode.spendwise.di.usecasefactory.AuthUseCaseFactory
-import com.gidcode.spendwise.di.usecasefactory.UserUseCaseFactory
+import com.gidcode.spendwise.data.di.usecasefactory.AuthUseCaseFactory
+import com.gidcode.spendwise.data.di.usecasefactory.UserUseCaseFactory
+import com.gidcode.spendwise.data.network.interceptor.AuthenticationInterceptor
 import com.gidcode.spendwise.domain.repository.AuthRepository
 import com.gidcode.spendwise.domain.repository.HomeRepository
 import com.gidcode.spendwise.domain.repository.SettingsRepository
@@ -30,7 +31,7 @@ object AppModule {
    @Singleton
    fun provideHttpClient(
       @ApplicationContext context: Context,
-      authInterceptor: AuthInterceptor
+      authInterceptor: AuthenticationInterceptor
    ): OkHttpClient = MyLadderApiClient.createHttpClient(context,authInterceptor)
 
    @Provides
@@ -49,6 +50,12 @@ object AppModule {
    @Singleton
    fun provideAuthInterceptor(
    ): AuthInterceptor = AuthInterceptor()
+
+   @Provides
+   @Singleton
+   fun provideAuthenticationInterceptor(
+      preference: SpendWiseDataStore
+   ): AuthenticationInterceptor = AuthenticationInterceptor(preference)
 
    @Provides
    @Singleton

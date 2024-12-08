@@ -3,10 +3,9 @@ package com.gidcode.spendwise.ui.home
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
-import com.gidcode.spendwise.data.network.SharedAuthState
-import com.gidcode.spendwise.di.usecasefactory.AuthUseCaseFactory
-import com.gidcode.spendwise.di.usecasefactory.UserUseCaseFactory
+import com.gidcode.spendwise.data.network.interceptor.SharedAuthState
+import com.gidcode.spendwise.data.di.usecasefactory.AuthUseCaseFactory
+import com.gidcode.spendwise.data.di.usecasefactory.UserUseCaseFactory
 import com.gidcode.spendwise.domain.model.AddExpenseDomainModel
 import com.gidcode.spendwise.domain.model.AddIncomeDomainModel
 import com.gidcode.spendwise.domain.model.Exception
@@ -14,7 +13,6 @@ import com.gidcode.spendwise.domain.model.ExpenseItemDomainModel
 import com.gidcode.spendwise.domain.model.IncomeItemDomainModel
 import com.gidcode.spendwise.domain.model.User
 import com.gidcode.spendwise.domain.repository.HomeRepository
-import com.gidcode.spendwise.domain.repository.SettingsRepository
 import com.gidcode.spendwise.util.toStringAsFixed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -61,7 +60,7 @@ class HomeViewModel @Inject constructor(
       viewModelScope.launch {
          authUseCaseFactory.getAccessTokenUseCase.invoke().collectLatest { value->
             _token = value
-            fetchAll()
+            value?.let { fetchAll() }
          }
       }
 
@@ -71,11 +70,7 @@ class HomeViewModel @Inject constructor(
    private fun income(){
       viewModelScope.launch {
          _uiState.value = UIState(isLoading = true)
-         if (_token == null){
-            _uiState.value = UIState(isLoading = false, error = Exception.UnAuthorizedException())
-            return@launch
-         }
-         val result = repository.incomes(_token!!)
+         val result = repository.incomes()
          result.fold(
             { failure ->
                _uiState.update { currentState ->
@@ -102,11 +97,7 @@ class HomeViewModel @Inject constructor(
    private fun expenditure(){
       viewModelScope.launch {
          _uiState.value = UIState(isLoading = true)
-         if (_token == null){
-            _uiState.value = UIState(isLoading = false, error = Exception.UnAuthorizedException())
-            return@launch
-         }
-         val result = repository.expenses(_token!!)
+         val result = repository.expenses()
          result.fold(
             { failure ->
                _uiState.update { currentState ->
@@ -133,12 +124,7 @@ class HomeViewModel @Inject constructor(
    private fun fetchAll(){
       viewModelScope.launch {
          _uiState.value = UIState(isLoading = true)
-         if (_token == null){
-            _uiState.value = UIState(isLoading = false, error = Exception.UnAuthorizedException())
-            return@launch
-         }
-         val result1 = repository.incomes(_token!!)
-         val result2 = repository.expenses(_token!!)
+         val result1 = repository.incomes()
 
          result1.fold(
             { failure ->
@@ -148,27 +134,30 @@ class HomeViewModel @Inject constructor(
             },
             { data ->
                println(data)
-               result2.fold(
-                  { failure ->
-                     _uiState.update { currentState ->
-                        currentState.copy(isLoading = false, error = failure)
+               viewModelScope.launch {
+                  val result2 = repository.expenses()
+                  result2.fold(
+                     { failure ->
+                        _uiState.update { currentState ->
+                           currentState.copy(isLoading = false, error = failure)
+                        }
+                     },
+                     {data2 ->
+                        _uiState.update { currentState ->
+                           val totalIncome = data.fold(0.0) { sum, item -> sum + item.amount }
+                           val totalExpense = data2.fold(0.0){ sum, item -> sum + item.estimatedAmount}
+                           currentState.copy(
+                              isLoading = false,
+                              incomeList = data,
+                              expenseList = data2,
+                              totalIncome = totalIncome,
+                              totalExpense = totalExpense,
+                              balance = (totalIncome - totalExpense).toStringAsFixed()
+                           )
+                        }
                      }
-                  },
-                  {data2 ->
-                     _uiState.update { currentState ->
-                        val totalIncome = data.fold(0.0) { sum, item -> sum + item.amount }
-                        val totalExpense = data2.fold(0.0){ sum, item -> sum + item.estimatedAmount}
-                        currentState.copy(
-                           isLoading = false,
-                           incomeList = data,
-                           expenseList = data2,
-                           totalIncome = totalIncome,
-                           totalExpense = totalExpense,
-                           balance = (totalIncome - totalExpense).toStringAsFixed()
-                        )
-                     }
-                  }
-               )
+                  )
+               }
             }
          )
       }
@@ -177,11 +166,7 @@ class HomeViewModel @Inject constructor(
    private fun addIncome(data: AddIncomeDomainModel) {
       viewModelScope.launch {
          _uiState.value = UIState(isLoading = true)
-         if (_token == null){
-            _uiState.value = UIState(isLoading = false, error = Exception.UnAuthorizedException())
-            return@launch
-         }
-         val result = repository.addIncome(_token!!,data)
+         val result = repository.addIncome(data)
          result.fold(
             {failure->
                _uiState.update { currentState ->
@@ -201,11 +186,7 @@ class HomeViewModel @Inject constructor(
    private fun addExpense(data: AddExpenseDomainModel) {
       viewModelScope.launch {
          _uiState.value = UIState(isLoading = true)
-         if (_token == null){
-            _uiState.value = UIState(isLoading = false, error = Exception.UnAuthorizedException())
-            return@launch
-         }
-         val result = repository.addExpense(_token!!,data)
+         val result = repository.addExpense(data)
          result.fold(
             {failure->
                _uiState.update { currentState ->
@@ -225,15 +206,19 @@ class HomeViewModel @Inject constructor(
    private fun onUnauthorized() {
       viewModelScope.launch {
          authUseCaseFactory.clearAccessTokenUseCase.invoke()
-         userUseCaseFactory.clearUseCase.invoke()
+         userUseCaseFactory.clearUserUseCase.invoke()
          userUseCaseFactory.clearUserIdUseCase.invoke()
+
+         _uiState.update { currentState -> currentState.copy(isAuthorized = _isAuthorized) }
       }
    }
 
    private fun user(){
+      println("trying to get user")
       viewModelScope.launch {
          userUseCaseFactory.getUserUseCase.invoke().collect{value ->
             if (value == null){
+               println("call getRemoteUser")
                getRemoteUser()
             }else {
                val json: Json = Json
@@ -248,12 +233,15 @@ class HomeViewModel @Inject constructor(
    }
 
    private fun getRemoteUser() {
+      println("in getRemoteUser")
       viewModelScope.launch {
          authUseCaseFactory.getAccessTokenUseCase.invoke().collect{token->
             if (token != null){
                userUseCaseFactory.getUserIdUseCase.invoke().collect{uuid->
+                  println("getting user id")
                   if (uuid != null){
-                     val result = userUseCaseFactory.getRemoteUserUseCase.invoke(uuid,token)
+                     println("calling getRemoteUserUseCase")
+                     val result = userUseCaseFactory.getRemoteUserUseCase.invoke(uuid)
                      result.getOrNull()?.let { user->
                         userUseCaseFactory.storeUserUseCase.invoke(user)
                         _uiState.update { currentState ->
@@ -263,6 +251,7 @@ class HomeViewModel @Inject constructor(
                   }
                }
             }
+            println("token null")
          }
       }
    }

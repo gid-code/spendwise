@@ -9,7 +9,6 @@ class GetRemoteUserUseCase(
    private val repository: SettingsRepository
 ) {
    suspend operator fun invoke(
-      uuid: String,
-      token: String
-   ): Either<Exception,User> = repository.getRemoteUser(uuid,token)
+      uuid: String
+   ): Either<Exception,User> = repository.getRemoteUser(uuid)
 }

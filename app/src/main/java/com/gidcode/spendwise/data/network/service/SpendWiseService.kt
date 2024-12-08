@@ -10,47 +10,44 @@ import com.gidcode.spendwise.data.network.constant.MyLadderApi
 import com.gidcode.spendwise.data.datasource.remote.model.SignUpApiModel
 import com.gidcode.spendwise.data.datasource.remote.model.SignUpApiResponseModel
 import com.gidcode.spendwise.data.datasource.remote.model.UserApiResponseModel
+import com.gidcode.spendwise.data.network.constant.ApiParameters.NO_AUTH_HEADER
 import retrofit2.http.*
 
-private const val AUTHORIZATION_KEY = "Authorization"
 
 interface SpendWiseService {
 
    @POST(MyLadderApi.LOGIN)
    suspend fun login(
-      @Body credentials: LoginApiModel
+      @Body credentials: LoginApiModel,
+      @Header(NO_AUTH_HEADER) authHeader: String = ""
    ): LoginApiResponseModel
 
    @POST(MyLadderApi.SIGNUP)
    suspend fun register(
-      @Body request: SignUpApiModel
+      @Body request: SignUpApiModel,
+      @Header(NO_AUTH_HEADER) authHeader: String = ""
    ): SignUpApiResponseModel
 
    @GET(MyLadderApi.INCOME)
    suspend fun income(
-      @Header(AUTHORIZATION_KEY) token: String
    ): List<IncomeItemApi>
 
    @GET(MyLadderApi.EXPENDITURE)
    suspend fun expenditure(
-      @Header(AUTHORIZATION_KEY) token: String
    ): List<ExpenseItemApi>
 
    @POST(MyLadderApi.INCOME)
    suspend fun addIncome(
-      @Header(AUTHORIZATION_KEY) token: String,
       @Body request: AddIncomeApiModel
    )
 
    @POST(MyLadderApi.EXPENDITURE)
    suspend fun addExpense(
-      @Header(AUTHORIZATION_KEY) token: String,
       @Body request: AddExpenseApiModel
    )
 
    @GET(MyLadderApi.USER_PROFILE)
    suspend fun user(
-      @Header(AUTHORIZATION_KEY) token: String,
-      @Path("uuid") uuid: String
+      @Path("userID") uuid: String
    ): UserApiResponseModel
 }

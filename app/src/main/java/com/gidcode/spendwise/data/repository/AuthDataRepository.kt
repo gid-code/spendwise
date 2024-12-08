@@ -20,6 +20,7 @@ class AuthDataRepository(
       return try {
          val result = remoteDataSource.login(credential.toApi()).toAccessTokenModel()
          localDataSource.storeAccessToken(result.token)
+         result.expiresAt?.let { localDataSource.storeTokenExpireAt(it) }
          right(result)
       }catch (e: Exception){
          println(e.message)
@@ -43,6 +44,10 @@ class AuthDataRepository(
 
    override suspend fun clearAccessToken() {
       localDataSource.clearKeyData(localDataSource.accessToken)
+   }
+
+   override suspend fun logout() {
+      localDataSource.clearData()
    }
 
 }

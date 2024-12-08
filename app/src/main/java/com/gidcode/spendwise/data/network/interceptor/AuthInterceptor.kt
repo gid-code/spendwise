@@ -1,30 +1,18 @@
-package com.gidcode.spendwise.data.network
+package com.gidcode.spendwise.data.network.interceptor
 
-import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.Response
-import javax.inject.Inject
-import javax.inject.Singleton
 
-class AuthInterceptor @Inject constructor(
-//   private val authEventHandler: AuthEventHandler
-): Interceptor {
-//   var authEventHandler: AuthEventHandler? = null
+class AuthInterceptor: Interceptor {
    override fun intercept(chain: Interceptor.Chain): Response {
       val response = chain.proceed(chain.request())
 
       if (response.code == 401) {
          // Trigger the navigation event
          println("Code is 401")
-//         CoroutineScope(Dispatchers.Main).launch {
-//            authEventHandler.onUnauthorized()
-            SharedAuthState.setUnauthorized(true)
-//         }
+         SharedAuthState.setUnauthorized(true)
       }else {
          SharedAuthState.setUnauthorized(false)
       }

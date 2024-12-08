@@ -17,8 +17,7 @@ class AuthRemoteDataSource(
       return service.register(request)
    }
 
-   suspend fun user(uuid: String, token: String): UserApiResponseModel {
-      val auth = "Bearer $token"
-      return service.user(uuid,auth)
+   suspend fun user(uuid: String): UserApiResponseModel {
+      return service.user(uuid)
    }
 }

@@ -18,9 +18,9 @@ class HomeDataRepository(
    private val localDataSource: SpendWiseDataStore
 ): HomeRepository {
 
-   override suspend fun incomes(token: String): Either<Failure, List<IncomeItemDomainModel>> {
+   override suspend fun incomes(): Either<Failure, List<IncomeItemDomainModel>> {
       return try {
-         val result = remoteDataSource.income(token).map { incomeItemApi ->
+         val result = remoteDataSource.income().map { incomeItemApi ->
             incomeItemApi.user?.let { localDataSource.storeUserId(it) }
             incomeItemApi.toDomain()
          }
@@ -31,9 +31,9 @@ class HomeDataRepository(
       }
    }
 
-   override suspend fun expenses(token: String): Either<Failure, List<ExpenseItemDomainModel>> {
+   override suspend fun expenses(): Either<Failure, List<ExpenseItemDomainModel>> {
       return try {
-         val result = remoteDataSource.expenditure(token).map { expenseItem ->
+         val result = remoteDataSource.expenditure().map { expenseItem ->
             expenseItem.toDomain()
          }
          right(result)
@@ -44,11 +44,10 @@ class HomeDataRepository(
    }
 
    override suspend fun addIncome(
-      token: String,
       data: AddIncomeDomainModel
    ): Either<Failure, String> {
       return try {
-         remoteDataSource.addIncome(token,data.toApi())
+         remoteDataSource.addIncome(data.toApi())
          right("Income Added")
       }catch (e: Exception){
          left(Failure.General(e.localizedMessage))
@@ -56,11 +55,10 @@ class HomeDataRepository(
    }
 
    override suspend fun addExpense(
-      token: String,
       data: AddExpenseDomainModel
    ): Either<Failure, String> {
       return try {
-         remoteDataSource.addExpense(token,data.toApi())
+         remoteDataSource.addExpense(data.toApi())
          right("Expense Added")
       }catch (e: Exception){
          left(Failure.General(e.localizedMessage))

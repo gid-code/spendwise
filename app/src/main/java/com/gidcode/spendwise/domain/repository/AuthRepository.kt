@@ -12,4 +12,5 @@ interface AuthRepository {
    suspend fun createUser(credential: CreateAccountDomainModel): Either<Exception,AccessTokenDomainModel>
    fun getAuthToken(): Flow<String?>
    suspend fun clearAccessToken()
+   suspend fun logout()
 }

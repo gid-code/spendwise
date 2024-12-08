@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +16,7 @@ class SpendWiseDataStore(
    private val context: Context
 ) {
    val accessToken = stringPreferencesKey("access_token")
+   val tokenExpiresAt = longPreferencesKey("token_expires_at")
    private val theme = stringPreferencesKey("theme_mode")
    val userId = stringPreferencesKey("user_id")
    val userProfile = stringPreferencesKey("user_profile")
@@ -33,6 +35,18 @@ class SpendWiseDataStore(
    fun getAccessToken(): Flow<String?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[accessToken]
+      }
+   }
+
+   suspend fun storeTokenExpireAt(data: Long) {
+      context.spendWiseDataStore.edit { preferences ->
+         preferences[tokenExpiresAt] = data
+      }
+   }
+
+   fun getTokenExpireAt(): Flow<Long?> {
+      return context.spendWiseDataStore.data.map { preferences ->
+         preferences[tokenExpiresAt]
       }
    }
 
@@ -88,6 +102,20 @@ class SpendWiseDataStore(
       return context.spendWiseDataStore.edit { preferences ->
          preferences.remove(removeKey)
       }
+   }
+
+   suspend fun clearUserAccessInfo(): Preferences {
+      return context.spendWiseDataStore.edit { preferences ->
+         preferences.remove(accessToken)
+         preferences.remove(tokenExpiresAt)
+         preferences.remove(userId)
+         preferences.remove(userProfile)
+         preferences.remove(enableBiometric)
+      }
+   }
+
+   suspend fun clearData(): Preferences {
+      return context.spendWiseDataStore.edit { preferences -> preferences.clear() }
    }
 }
 

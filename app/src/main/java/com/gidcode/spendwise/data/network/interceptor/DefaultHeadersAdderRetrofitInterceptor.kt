@@ -1,4 +1,4 @@
-package com.gidcode.spendwise.data.network
+package com.gidcode.spendwise.data.network.interceptor
 
 import okhttp3.Interceptor
 import okhttp3.Response

@@ -10,23 +10,19 @@ class HomeRemoteDataSource(
    private val service: SpendWiseService,
 ) {
 
-   suspend fun income(token: String): List<IncomeItemApi> {
-      val auth = "Bearer $token"
-      return service.income(auth)
+   suspend fun income(): List<IncomeItemApi> {
+      return service.income()
    }
 
-   suspend fun expenditure(token: String): List<ExpenseItemApi> {
-      val auth = "Bearer $token"
-      return service.expenditure(auth)
+   suspend fun expenditure(): List<ExpenseItemApi> {
+      return service.expenditure()
    }
 
-   suspend fun addIncome(token: String,data: AddIncomeApiModel) {
-      val auth = "Bearer $token"
-      return service.addIncome(auth,data)
+   suspend fun addIncome(data: AddIncomeApiModel) {
+      return service.addIncome(data)
    }
 
-   suspend fun addExpense(token: String,data: AddExpenseApiModel) {
-      val auth = "Bearer $token"
-      return service.addExpense(auth,data)
+   suspend fun addExpense(data: AddExpenseApiModel) {
+      return service.addExpense(data)
    }
 }
