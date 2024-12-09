@@ -69,7 +69,7 @@ class HomeViewModel @Inject constructor(
 
    private fun income(){
       viewModelScope.launch {
-         _uiState.value = UIState(isLoading = true)
+         _uiState.update { it.copy(isLoading = true) }
          val result = repository.incomes()
          result.fold(
             { failure ->
@@ -96,7 +96,7 @@ class HomeViewModel @Inject constructor(
 
    private fun expenditure(){
       viewModelScope.launch {
-         _uiState.value = UIState(isLoading = true)
+         _uiState.update { it.copy(isLoading = true) }
          val result = repository.expenses()
          result.fold(
             { failure ->
@@ -123,7 +123,7 @@ class HomeViewModel @Inject constructor(
 
    private fun fetchAll(){
       viewModelScope.launch {
-         _uiState.value = UIState(isLoading = true)
+         _uiState.update { it.copy(isLoading = true) }
          val result1 = repository.incomes()
 
          result1.fold(
@@ -165,7 +165,7 @@ class HomeViewModel @Inject constructor(
 
    private fun addIncome(data: AddIncomeDomainModel) {
       viewModelScope.launch {
-         _uiState.value = UIState(isLoading = true)
+         _uiState.update { it.copy(isLoading = true) }
          val result = repository.addIncome(data)
          result.fold(
             {failure->
@@ -185,7 +185,7 @@ class HomeViewModel @Inject constructor(
 
    private fun addExpense(data: AddExpenseDomainModel) {
       viewModelScope.launch {
-         _uiState.value = UIState(isLoading = true)
+         _uiState.update { it.copy(isLoading = true) }
          val result = repository.addExpense(data)
          result.fold(
             {failure->
@@ -214,11 +214,9 @@ class HomeViewModel @Inject constructor(
    }
 
    private fun user(){
-      println("trying to get user")
       viewModelScope.launch {
          userUseCaseFactory.getUserUseCase.invoke().collect{value ->
             if (value == null){
-               println("call getRemoteUser")
                getRemoteUser()
             }else {
                val json: Json = Json
@@ -233,14 +231,11 @@ class HomeViewModel @Inject constructor(
    }
 
    private fun getRemoteUser() {
-      println("in getRemoteUser")
       viewModelScope.launch {
          authUseCaseFactory.getAccessTokenUseCase.invoke().collect{token->
             if (token != null){
                userUseCaseFactory.getUserIdUseCase.invoke().collect{uuid->
-                  println("getting user id")
                   if (uuid != null){
-                     println("calling getRemoteUserUseCase")
                      val result = userUseCaseFactory.getRemoteUserUseCase.invoke(uuid)
                      result.getOrNull()?.let { user->
                         userUseCaseFactory.storeUserUseCase.invoke(user)
@@ -251,7 +246,6 @@ class HomeViewModel @Inject constructor(
                   }
                }
             }
-            println("token null")
          }
       }
    }

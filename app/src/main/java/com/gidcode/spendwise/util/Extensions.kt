@@ -11,7 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.DirectionsBus
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocalGasStation
 import androidx.compose.material.icons.filled.LocalTaxi
 import androidx.compose.material.icons.filled.Movie
@@ -58,9 +60,14 @@ fun String.getIconForItem(): ImageVector {
       return Icons.Default.Movie
    } else if (lowercaseItemName.contains("concerts")) {
       return Icons.Default.MusicNote
-   } else if (lowercaseItemName.contains("books")) {
+   } else if (lowercaseItemName.contains("book")) {
       return Icons.Default.Book
-   } else {
+   } else if (lowercaseItemName.contains("pen")) {
+      return Icons.Default.Edit
+   } else if (lowercaseItemName.contains("rent")) {
+      return Icons.Default.Home
+   }
+   else {
       return Icons.Default.AttachMoney
    }
 }

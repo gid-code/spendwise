@@ -3,6 +3,7 @@ plugins {
    alias(libs.plugins.jetbrains.kotlin.android)
    id("kotlin-kapt")
    alias(libs.plugins.dagger.hilt.android)
+   alias(libs.plugins.kotlin.plugin.serialization)
 }
 
 android {
@@ -83,8 +84,10 @@ dependencies {
    // Compose Accompanist
    implementation (libs.accompanist.insets)
 
+   // Kotlin serialization
    implementation (libs.kotlinx.serialization.json)
 
+   // Biometric
    implementation(libs.androidx.biometric)
 
    testImplementation(libs.junit)
