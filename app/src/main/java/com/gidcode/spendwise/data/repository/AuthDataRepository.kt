@@ -11,19 +11,19 @@ import com.gidcode.spendwise.util.Either
 import com.gidcode.spendwise.util.left
 import com.gidcode.spendwise.util.right
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class AuthDataRepository(
+class AuthDataRepository @Inject constructor(
    private val remoteDataSource: AuthRemoteDataSource,
-   private val localDataSource: SpendWiseDataStore
+   private val localDataStore: SpendWiseDataStore
 ): AuthRepository {
    override suspend fun login(credential: LoginDomainModel): Either<Failure, AccessTokenDomainModel> {
       return try {
          val result = remoteDataSource.login(credential.toApi()).toAccessTokenModel()
-         localDataSource.storeAccessToken(result.token)
-         result.expiresAt?.let { localDataSource.storeTokenExpireAt(it) }
+         localDataStore.storeAccessToken(result.token)
+         result.expiresAt?.let { localDataStore.storeTokenExpireAt(it) }
          right(result)
       }catch (e: Exception){
-         println(e.message)
          left(Failure.General(e.localizedMessage))
       }
    }
@@ -33,21 +33,20 @@ class AuthDataRepository(
          remoteDataSource.createUser(credential.toApi())
          login(credential.toLoginDomain())
       }catch (e: Exception){
-         println(e.message)
          left(Failure.General(e.localizedMessage))
       }
    }
 
    override fun getAuthToken(): Flow<String?> {
-      return localDataSource.getAccessToken()
+      return localDataStore.getAccessToken()
    }
 
    override suspend fun clearAccessToken() {
-      localDataSource.clearKeyData(localDataSource.accessToken)
+      localDataStore.clearKeyData(localDataStore.accessToken)
    }
 
    override suspend fun logout() {
-      localDataSource.clearData()
+      localDataStore.clearData()
    }
 
 }

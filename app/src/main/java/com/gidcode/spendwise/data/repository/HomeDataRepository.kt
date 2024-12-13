@@ -11,17 +11,17 @@ import com.gidcode.spendwise.domain.repository.HomeRepository
 import com.gidcode.spendwise.util.Either
 import com.gidcode.spendwise.util.left
 import com.gidcode.spendwise.util.right
-import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class HomeDataRepository(
+class HomeDataRepository @Inject constructor(
    private val remoteDataSource: HomeRemoteDataSource,
-   private val localDataSource: SpendWiseDataStore
+   private val localDataStore: SpendWiseDataStore
 ): HomeRepository {
 
    override suspend fun incomes(): Either<Failure, List<IncomeItemDomainModel>> {
       return try {
          val result = remoteDataSource.income().map { incomeItemApi ->
-            incomeItemApi.user?.let { localDataSource.storeUserId(it) }
+            incomeItemApi.user?.let { localDataStore.storeUserId(it) }
             incomeItemApi.toDomain()
          }
          right(result)

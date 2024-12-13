@@ -5,8 +5,9 @@ import com.gidcode.spendwise.data.datasource.remote.model.AddIncomeApiModel
 import com.gidcode.spendwise.data.datasource.remote.model.ExpenseItemApi
 import com.gidcode.spendwise.data.datasource.remote.model.IncomeItemApi
 import com.gidcode.spendwise.data.network.service.SpendWiseService
+import javax.inject.Inject
 
-class HomeRemoteDataSource(
+class HomeRemoteDataSource @Inject constructor(
    private val service: SpendWiseService,
 ) {
 

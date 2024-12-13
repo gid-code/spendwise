@@ -1,5 +1,6 @@
 package com.gidcode.spendwise.data.network.interceptor
 
+import com.gidcode.spendwise.data.datasource.local.Preferences
 import com.gidcode.spendwise.data.datasource.local.SpendWiseDataStore
 import com.gidcode.spendwise.data.network.constant.ApiParameters.AUTH_HEADER
 import com.gidcode.spendwise.data.network.constant.ApiParameters.NO_AUTH_HEADER
@@ -12,8 +13,8 @@ import okhttp3.Response
 import java.time.Instant
 import javax.inject.Inject
 
-class AuthenticationInterceptor @Inject constructor(
-   private val preferences: SpendWiseDataStore
+class AuthenticationInterceptor(
+   private val preferences: Preferences
 ): Interceptor {
 
    companion object {

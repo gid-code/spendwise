@@ -8,13 +8,17 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SpendWiseDataStore(
-   private val context: Context
-) {
+@Singleton
+class SpendWiseDataStore @Inject constructor(
+    @ApplicationContext val context: Context
+): com.gidcode.spendwise.data.datasource.local.Preferences {
+
    val accessToken = stringPreferencesKey("access_token")
    val tokenExpiresAt = longPreferencesKey("token_expires_at")
    private val theme = stringPreferencesKey("theme_mode")
@@ -26,86 +30,86 @@ class SpendWiseDataStore(
       private const val TAG = "SpendWiseDataStore"
    }
 
-   suspend fun storeAccessToken(data: String) {
+   override suspend fun storeAccessToken(data: String) {
       context.spendWiseDataStore.edit { preferences ->
          preferences[accessToken] = data
       }
    }
 
-   fun getAccessToken(): Flow<String?> {
+   override fun getAccessToken(): Flow<String?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[accessToken]
       }
    }
 
-   suspend fun storeTokenExpireAt(data: Long) {
+   override suspend fun storeTokenExpireAt(data: Long) {
       context.spendWiseDataStore.edit { preferences ->
          preferences[tokenExpiresAt] = data
       }
    }
 
-   fun getTokenExpireAt(): Flow<Long?> {
+   override fun getTokenExpireAt(): Flow<Long?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[tokenExpiresAt]
       }
    }
 
-   suspend fun storeThemeMode(data: String) {
+   override suspend fun storeThemeMode(data: String) {
       context.spendWiseDataStore.edit { preferences ->
          preferences[theme] = data
       }
    }
 
-   fun getThemeMode(): Flow<String?> {
+   override fun getThemeMode(): Flow<String?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[theme]
       }
    }
 
-   suspend fun storeUserId(data: String) {
+   override suspend fun storeUserId(data: String) {
       context.spendWiseDataStore.edit { preferences ->
          preferences[userId] = data
       }
    }
 
-   fun getUserId(): Flow<String?> {
+   override fun getUserId(): Flow<String?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[userId]
       }
    }
 
-   suspend fun storeUserProfile(data: String) {
+   override suspend fun storeUserProfile(data: String) {
       context.spendWiseDataStore.edit { preferences ->
          preferences[userProfile] = data
       }
    }
 
-   fun getUserProfile(): Flow<String?> {
+   override fun getUserProfile(): Flow<String?> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[userProfile]
       }
    }
 
-   suspend fun toggleBiometric() {
+   override suspend fun toggleBiometric() {
       context.spendWiseDataStore.edit { preferences ->
          preferences[enableBiometric] = !(preferences[enableBiometric] ?: false)
       }
    }
 
-   fun getEnableBiometric(): Flow<Boolean> {
+   override fun getEnableBiometric(): Flow<Boolean> {
       return context.spendWiseDataStore.data.map { preferences ->
          preferences[enableBiometric] ?: false
       }
    }
 
-   suspend fun clearKeyData(removeKey: Preferences.Key<String>): Preferences {
-      return context.spendWiseDataStore.edit { preferences ->
+   override suspend fun clearKeyData(removeKey: Preferences.Key<String>) {
+      context.spendWiseDataStore.edit { preferences ->
          preferences.remove(removeKey)
       }
    }
 
-   suspend fun clearUserAccessInfo(): Preferences {
-      return context.spendWiseDataStore.edit { preferences ->
+   override suspend fun clearUserAccessInfo() {
+      context.spendWiseDataStore.edit { preferences ->
          preferences.remove(accessToken)
          preferences.remove(tokenExpiresAt)
          preferences.remove(userId)
@@ -114,8 +118,8 @@ class SpendWiseDataStore(
       }
    }
 
-   suspend fun clearData(): Preferences {
-      return context.spendWiseDataStore.edit { preferences -> preferences.clear() }
+   override suspend fun clearData() {
+      context.spendWiseDataStore.edit { preferences -> preferences.clear() }
    }
 }
 

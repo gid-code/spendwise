@@ -7,7 +7,6 @@ import com.gidcode.spendwise.domain.model.CreateAccountDomainModel
 import com.gidcode.spendwise.domain.model.Exception
 import com.gidcode.spendwise.domain.model.LoginDomainModel
 import com.gidcode.spendwise.domain.repository.AuthRepository
-import com.gidcode.spendwise.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

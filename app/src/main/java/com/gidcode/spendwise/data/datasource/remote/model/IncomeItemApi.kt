@@ -9,5 +9,5 @@ data class IncomeItemApi(
    @SerializedName("amount") var amount : Int? = null,
    @SerializedName("user") var user : String? = null
 ) {
-   fun toDomain() = IncomeItemDomainModel(id!!,nameOfRevenue!!, amount!!)
+   fun toDomain() = IncomeItemDomainModel(id.orEmpty(),nameOfRevenue.orEmpty(), amount ?: -1)
 }

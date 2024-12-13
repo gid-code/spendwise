@@ -17,10 +17,20 @@ android {
       versionCode = 1
       versionName = "1.0"
 
-      testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//      testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+      testInstrumentationRunner = "com.gidcode.spendwise.HiltTestRunner"
       vectorDrawables {
          useSupportLibrary = true
       }
+   }
+
+   sourceSets {
+//      androidTest {
+//
+//      }
+//      androidTest {
+//         assets.srcDirs = ["src/debug/assets"]
+//      }
    }
 
    buildTypes {
@@ -41,6 +51,11 @@ android {
    }
    buildFeatures {
       compose = true
+   }
+   testOptions {
+      unitTests {
+         isIncludeAndroidResources = true
+      }
    }
    composeOptions {
       kotlinCompilerExtensionVersion = "1.5.12"
@@ -75,8 +90,13 @@ dependencies {
 
    // Hilt - dependency injection
    implementation (libs.hilt.android)
+   implementation(libs.androidx.monitor)
+   testImplementation(libs.junit.jupiter)
+//   androidTestImplementation(libs.junit.jupiter)
    kapt (libs.hilt.compiler)
    kapt (libs.androidx.hilt.compiler)
+   androidTestImplementation (libs.hilt.android.testing)
+   kaptAndroidTest (libs.hilt.android.compiler)
 
    // Preferences DataStore
    implementation(libs.androidx.datastore.preferences)
@@ -89,6 +109,16 @@ dependencies {
 
    // Biometric
    implementation(libs.androidx.biometric)
+
+   // Testing Dependencies
+   testImplementation (libs.truth)
+   testImplementation (libs.mockito.core)
+   testImplementation (libs.robolectric)
+   androidTestImplementation (libs.truth)
+   androidTestImplementation (libs.androidx.core.testing)
+
+   testImplementation(libs.mockwebserver)
+   androidTestImplementation(libs.mockwebserver)
 
    testImplementation(libs.junit)
    androidTestImplementation(libs.androidx.junit)

@@ -9,18 +9,19 @@ import com.gidcode.spendwise.util.ThemeMode
 import com.gidcode.spendwise.util.left
 import com.gidcode.spendwise.util.right
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 import com.gidcode.spendwise.domain.model.Exception as Failure
 
-class SettingsDataRepository(
+class SettingsDataRepository @Inject constructor(
    private val remoteDataSource: AuthRemoteDataSource,
-   private val localDataSource: SpendWiseDataStore
+   private val localDataStore: SpendWiseDataStore
 ): SettingsRepository {
    override suspend fun saveThemeMode(mode: ThemeMode) {
-      localDataSource.storeThemeMode(mode.toString())
+      localDataStore.storeThemeMode(mode.toString())
    }
 
    override fun getThemeMode(): Flow<String?> {
-      return localDataSource.getThemeMode()
+      return localDataStore.getThemeMode()
    }
 
    override suspend fun getRemoteUser(uuid: String): Either<Failure,User> {
@@ -33,30 +34,30 @@ class SettingsDataRepository(
    }
 
    override suspend fun saveUser(user: User) {
-      localDataSource.storeUserProfile(user.toJsonString())
+      localDataStore.storeUserProfile(user.toJsonString())
    }
 
    override fun getUser(): Flow<String?> {
-      return localDataSource.getUserProfile()
+      return localDataStore.getUserProfile()
    }
 
    override fun getUserId(): Flow<String?> {
-      return localDataSource.getUserId()
+      return localDataStore.getUserId()
    }
 
    override fun getBiometricEnabled(): Flow<Boolean> {
-      return localDataSource.getEnableBiometric()
+      return localDataStore.getEnableBiometric()
    }
 
    override suspend fun toggleBiometric() {
-      localDataSource.toggleBiometric()
+      localDataStore.toggleBiometric()
    }
 
    override suspend fun clearUserId() {
-      localDataSource.clearKeyData(localDataSource.userId)
+      localDataStore.clearKeyData(localDataStore.userId)
    }
 
    override suspend fun clearUser() {
-      localDataSource.clearKeyData(localDataSource.userProfile)
+      localDataStore.clearKeyData(localDataStore.userProfile)
    }
 }

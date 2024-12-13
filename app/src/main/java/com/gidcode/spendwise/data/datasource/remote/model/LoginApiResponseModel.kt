@@ -16,7 +16,7 @@ data class LoginApiResponseModel (
    @Transient
    private val requestedAt: Instant = Instant.now()
 
-   fun toAccessTokenModel() = AccessTokenDomainModel(accessToken!!, expiresAt)
+   fun toAccessTokenModel() = AccessTokenDomainModel(accessToken.orEmpty(), expiresAt)
 
    private val expiresAt: Long?
       get() {

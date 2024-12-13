@@ -24,80 +24,45 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
-   @Provides
-   @Singleton
-   fun provideHttpClient(
-      @ApplicationContext context: Context,
-      authInterceptor: AuthenticationInterceptor
-   ): OkHttpClient = MyLadderApiClient.createHttpClient(context,authInterceptor)
+//@Module
+//@InstallIn(SingletonComponent::class)
+//object AppModule {
 
-   @Provides
-   @Singleton
-   fun provideSpendWiseService(
-      client: OkHttpClient
-   ): SpendWiseService = MyLadderApiClient.createSpendWiseService(client)
+//   @Provides
+//   fun provideAuthRemoteDataSource(
+//      service: SpendWiseService
+//   ): AuthRemoteDataSource = AuthRemoteDataSource(service)
 
-   @Provides
-   @Singleton
-   fun provideSpendWiseDataStore(
-      @ApplicationContext context: Context
-   ): SpendWiseDataStore = SpendWiseDataStore(context)
+//   @Provides
+//   fun provideAuthRepository(
+//      dataSource: AuthRemoteDataSource,
+//      dataStore: SpendWiseDataStore
+//   ): AuthRepository = AuthDataRepository(dataSource,dataStore)
 
-   @Provides
-   @Singleton
-   fun provideAuthInterceptor(
-   ): AuthInterceptor = AuthInterceptor()
+//   @Provides
+//   fun provideHomeRemoteDataSource(
+//      service: SpendWiseService
+//   ): HomeRemoteDataSource = HomeRemoteDataSource(service)
 
-   @Provides
-   @Singleton
-   fun provideAuthenticationInterceptor(
-      preference: SpendWiseDataStore
-   ): AuthenticationInterceptor = AuthenticationInterceptor(preference)
+//   @Provides
+//   fun provideHomeRepository(
+//      dataSource: HomeRemoteDataSource,
+//      dataStore: SpendWiseDataStore
+//   ): HomeRepository = HomeDataRepository(dataSource,dataStore)
+//
+//   @Provides
+//   fun provideSettingsRepository(
+//      remoteDataSource: AuthRemoteDataSource,
+//      dataSource: SpendWiseDataStore
+//   ): SettingsRepository = SettingsDataRepository(remoteDataSource,dataSource)
 
-   @Provides
-   @Singleton
-   fun provideAuthRemoteDataSource(
-      service: SpendWiseService
-   ): AuthRemoteDataSource = AuthRemoteDataSource(service)
+//   @Provides
+//   fun providesUserUseCaseFactory(
+//      repository: SettingsRepository
+//   ): UserUseCaseFactory = UserUseCaseFactory(repository)
+//
+//   @Provides
+//   fun providesAuthUseCaseFactory(
+//   ): AuthUseCaseFactory = AuthUseCaseFactory
 
-   @Provides
-   @Singleton
-   fun provideAuthRepository(
-      dataSource: AuthRemoteDataSource,
-      dataStore: SpendWiseDataStore
-   ): AuthRepository = AuthDataRepository(dataSource,dataStore)
-
-   @Provides
-   @Singleton
-   fun provideHomeRemoteDataSource(
-      service: SpendWiseService
-   ): HomeRemoteDataSource = HomeRemoteDataSource(service)
-
-   @Provides
-   @Singleton
-   fun provideHomeRepository(
-      dataSource: HomeRemoteDataSource,
-      dataStore: SpendWiseDataStore
-   ): HomeRepository = HomeDataRepository(dataSource,dataStore)
-
-   @Provides
-   @Singleton
-   fun provideSettingsRepository(
-      remoteDataSource: AuthRemoteDataSource,
-      dataSource: SpendWiseDataStore
-   ): SettingsRepository = SettingsDataRepository(remoteDataSource,dataSource)
-
-   @Provides
-   fun providesUserUseCaseFactory(
-      repository: SettingsRepository
-   ): UserUseCaseFactory = UserUseCaseFactory(repository)
-
-   @Provides
-   fun providesAuthUseCaseFactory(
-      repository: AuthRepository
-   ): AuthUseCaseFactory = AuthUseCaseFactory(repository)
-
-}
+//}

@@ -9,5 +9,5 @@ data class ExpenseItemApi(
    @SerializedName("estimatedAmount") var estimatedAmount : Int? = null,
    @SerializedName("nameOfItem") var nameOfItem : String? = null
 ){
-   fun toDomain() = ExpenseItemDomainModel(category!!, nameOfItem!!, estimatedAmount!!)
+   fun toDomain() = ExpenseItemDomainModel(category.orEmpty(), nameOfItem.orEmpty(), estimatedAmount ?: -1)
 }
